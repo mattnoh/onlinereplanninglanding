@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>cSTC-DDP — scrollytelling prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},
+  svg:{fontCache:'global'},options:{skipHtmlTags:['script','noscript','style','textarea','pre']}};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --ink:#111114; --muted:#5c6068; --bg:#ffffff; --bg-alt:#f5f6f8;
+  --panel:#0a0a0c; --panel-ink:#ffffff;
+  --accent:#1273eb;          /* TODO pin from Figma fills */
+  --accent-deep:#1b4fcc;     /* nav-active */
+  --accent-soft:#e8f0fb;
+  --line:#e3e4e8;
+  --serif:"Gothic A1",system-ui,sans-serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --rail:11rem;
+  --media-col:clamp(20rem,42vw,44rem);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ---------- hero ---------- */
+.hero{min-height:78vh;display:grid;place-items:center;text-align:center;padding:6rem 1.5rem 4rem;position:relative;overflow:hidden}
+.hero-media{position:absolute;inset:0;background:var(--bg-alt);overflow:hidden}
+.hero-inner{position:relative;max-width:60rem}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4.4vw,4rem);line-height:1.15;margin:0 0 1rem}
+.venue{color:var(--muted);font-size:1rem;margin:.25rem 0}
+.authors{font-weight:700;margin:1.5rem 0 .25rem}
+.badges{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:2rem}
+.badge{font-size:.9rem;font-weight:700;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:.45rem 1.1rem}
+.badge:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- scrollytelling ---------- */
+.scrolly{display:grid;grid-template-columns:var(--media-col) minmax(0,1fr);gap:0;margin-left:var(--rail)}
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:var(--panel);color:#fff;z-index:20;padding:1.5rem 0;overflow-y:auto;opacity:0;transform:translateX(-100%);pointer-events:none;transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1);will-change:opacity,transform}
+.rail.on{opacity:1;transform:none;pointer-events:auto}
+.rail-group{font-size:.8rem;font-weight:700;text-align:center;padding:1.1rem 0 .5rem;border-bottom:1px solid rgba(255,255,255,.3);margin:0 0 .4rem}
+.rail-item{display:block;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.72);padding:.5rem .9rem;text-decoration:none;cursor:pointer;border-left:3px solid transparent}
+.rail-item:hover{color:#fff}
+.rail-item.on{color:#fff;background:var(--accent-deep);border-left-color:var(--accent)}
+.media{position:sticky;top:0;height:100vh;background:var(--bg);border-right:1px solid var(--line)}
+.media-inner{position:absolute;inset:0}
+.mstack{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:1.75rem}
+.media-frame{position:absolute;inset:0;display:grid;place-items:center;padding:2.5rem;opacity:0;transform:translateY(14px) scale(.985);transition:opacity .62s cubic-bezier(.22,.61,.36,1),transform .62s cubic-bezier(.22,.61,.36,1);pointer-events:none}
+.media-frame.is-active{opacity:1;transform:none;pointer-events:auto}
+.ph{width:100%;height:100%;border:1px dashed #c3c6cc;border-radius:10px;display:grid;place-items:center;text-align:center;padding:2rem;color:var(--muted)}
+.ph b{display:block;font-size:1.05rem;color:var(--ink);margin-bottom:.5rem}
+.ph small{font-size:.82rem;line-height:1.5}
+
+.beats{padding:0}
+.beat{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:7rem 3.5rem}
+.beat h2{font-family:var(--serif);font-size:clamp(1.5rem,2.4vw,2.1rem);line-height:1.25;margin:0 0 1rem}
+.beat p{margin:0 0 1rem;font-size:1.0625rem}
+.takeaway{border-left:3px solid var(--accent);padding-left:1rem;font-weight:700}
+
+/* ---------- dark interlude ---------- */
+.dark{background:var(--panel);color:var(--panel-ink)}
+.dark .beat h2,.dark .ph b{color:var(--panel-ink)}
+
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:.35rem 0;margin:1.25rem 0!important}
+mjx-container{font-size:.98em}
+.eq{border-left:2px solid var(--accent-soft);padding-left:1rem;margin:1.25rem 0}
+@media (max-width:900px){mjx-container{font-size:.9em}}
+.hero-media img{width:100%;height:100%;object-fit:cover;opacity:.28}
+.ph-note{position:absolute;bottom:1rem;left:0;right:0;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mfig{margin:0;width:100%;display:flex;flex-direction:column;justify-content:center;gap:.6rem}
+.mfig img{width:100%;object-fit:contain;background:var(--bg)}
+.mstack .mfig{flex:1 1 0;min-height:0}
+.mstack .mfig img{height:100%;min-height:0}
+.mfig figcaption{font-size:.82rem;line-height:1.45;color:var(--muted)}
+.wide{max-width:64rem;margin:0 auto;padding:4.5rem 1.5rem}
+.wrap-wide{margin-left:var(--rail);background:var(--bg);position:relative}
+.wrap-wide::before{content:"";position:absolute;top:0;left:0;right:0;height:14rem;
+  background:linear-gradient(to bottom,var(--bg-alt) 0%,rgba(245,246,248,.45) 55%,var(--bg) 100%);
+  pointer-events:none}
+.wrap-wide > .wide:first-child{padding-top:7rem}
+.hero{padding-left:calc(var(--rail) + 1.5rem)}
+.wide + .wide{border-top:1px solid var(--line)}
+.wide h2{font-family:var(--serif);font-size:1.9rem;margin:0 0 1.5rem}
+.wide h3{font-size:1.05rem;margin:2.5rem 0 .5rem}
+.cap{color:var(--muted);font-size:.95rem}
+.tw{overflow-x:auto;margin:1rem 0 2rem}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--line);white-space:nowrap}
+thead th{border-bottom:2px solid var(--ink);font-size:.85rem;letter-spacing:.02em}
+tbody tr:last-child td{border-bottom:2px solid var(--ink)}
+.wfig{margin:2.5rem 0 0}
+.wfig img{width:100%;max-width:38rem;display:block;margin:0 auto}
+.wfig figcaption{font-size:.85rem;color:var(--muted);margin-top:.75rem;text-align:center}
+pre{background:#0f1419;color:#e6e6e6;padding:1.25rem;border-radius:8px;overflow-x:auto;font-size:.82rem;line-height:1.5}
+.refs{font-size:.9rem;line-height:1.7;color:var(--muted);padding-left:1.2rem}
+.refs li{margin-bottom:.5rem}
+footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;text-align:center}
+
+/* ---------- mobile / reduced motion ---------- */
+@media (max-width:900px){
+  .rail{display:none}
+  .scrolly{margin-left:0;grid-template-columns:1fr}
+  .hero{padding-left:1.5rem}
+  .wrap-wide{margin-left:0}
+  .media{display:none}
+  .beat{min-height:auto;padding:3rem 1.25rem}
+  .beat .inline-media{display:block;margin-bottom:1.5rem}
+}
+.inline-media{display:none}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .media{position:static;height:auto}
+  .media-frame{position:static;opacity:1}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-media"><img src="assets/fig/flight_circle.png" alt="Time-lapse landing trajectory, circular target motion"><p class="ph-note">placeholder still &mdash; replace with 6&ndash;10 s loop cut from DJI_0018.MP4 (4K/120 fps)</p></div>
+  <div class="hero-inner">
+    <h1>Compound State-Triggered Constrained DDP<br>for Receding-Horizon Quadrotor Landing on a Moving Platform</h1>
+    <p class="venue">ICCAS 2026</p>
+    <p class="authors">SungJin Noh · Yong-Hee Kim · Yeohosua Kim · Kwang-Ki K. Kim</p>
+    <p class="venue">Department of Electrical and Computer Engineering, Inha University</p>
+    <nav class="badges">
+      <a class="badge" href="#">Paper</a>
+      <a class="badge" href="#b1">Problem</a>
+      <a class="badge" href="#b4">Method</a>
+      <a class="badge" href="#results">Results</a>
+      <a class="badge" href="#code">Code</a>
+      <a class="badge" href="#bibtex">BibTeX</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="rail" id="rail" aria-label="Section progress">
+  <div class="rail-group">Motivation</div>
+  <a class="rail-item" data-for="1">Problem</a>
+  <a class="rail-item" data-for="9">Related work</a>
+  <a class="rail-item" data-for="2">Feasibility</a>
+  <div class="rail-group">STC Method</div>
+  <a class="rail-item" data-for="3">Trigger geometry</a>
+  <a class="rail-item" data-for="4">Accumulator</a>
+  <div class="rail-group">Evaluation</div>
+  <a class="rail-item" data-for="5">Benchmark</a>
+  <a class="rail-item" data-for="6">SITL</a>
+  <div class="rail-group">Online Execution</div>
+  <a class="rail-item" data-for="10">Architecture</a>
+  <a class="rail-item" data-for="7">Hardware</a>
+  <a class="rail-item" data-for="8">Active phase</a>
+  <div class="rail-group">Paper</div>
+  <a class="rail-item" data-sec="results">Results</a>
+  <a class="rail-item" data-sec="video">Video</a>
+  <a class="rail-item" data-sec="code">Code</a>
+  <a class="rail-item" data-sec="bibtex">BibTeX</a>
+  <a class="rail-item" data-sec="references">References</a>
+</nav>
+
+<div class="scrolly">
+  <!-- PINNED MEDIA -->
+  <div class="media" id="media">
+    <div class="media-inner">
+      <div class="media-frame" data-key="1"><div class="mstack"><div class="ph"><span><b>Figma slide 2 &mdash; three cone panels</b><small>Figma slide 2. Also available for this beat: slide 4 powered-descent example.</small></span></div></div></div>
+      <div class="media-frame" data-key="2"><div class="mstack"><div class="ph"><span><b>Ablation, three panels</b><small>TO RENDER &mdash; always-on infeasible at x&#8320; &middot; removed lands but violates &middot; cSTC lands and complies</small></span></div></div></div>
+      <div class="media-frame" data-key="3"><div class="mstack"><figure class="mfig"><img src="assets/fig/stc_paper_3d.png" alt="(a) Trajectories in the world and target-centered frames" loading="lazy"><figcaption>(a) Trajectories in the world and target-centered frames</figcaption></figure><figure class="mfig"><img src="assets/fig/stc_paper_states.png" alt="(b) State and input histories during online replanning" loading="lazy"><figcaption>(b) State and input histories during online replanning</figcaption></figure></div></div>
+      <div class="media-frame" data-key="4"><div class="mstack"><figure class="mfig"><img src="assets/fig/single_horizon_stc_paper_3d.png" alt="(a) Planned trajectory for a stationary target" loading="lazy"><figcaption>(a) Planned trajectory for a stationary target</figcaption></figure><figure class="mfig"><img src="assets/fig/single_horizon_stc_paper_states.png" alt="(b) State and input histories during the open-loop solve" loading="lazy"><figcaption>(b) State and input histories during the open-loop solve</figcaption></figure></div></div>
+      <div class="media-frame" data-key="5"><div class="mstack"><figure class="mfig"><img src="assets/fig/cloud_cstc_openscvx_100ic.png" alt="Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange). Figma slide 9 adds a six-panel comparison and an enforcement-strategy table." loading="lazy"><figcaption>Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange). Figma slide 9 adds a six-panel comparison and an enforcement-strategy table.</figcaption></figure></div></div>
+      <div class="media-frame" data-key="6"><div class="mstack"><div class="ph"><span><b>SITL panels &mdash; not in the paper</b><small>Figma slide 13 (six motions, world + target-relative), slide 14 (MC1, 8 panels + sampling ranges), slide 15 (MC2, 8 panels + noise levels), slide 11 (Gazebo), slide 12 (planned/executed + path agreement).</small></span></div></div></div>
+      <div class="media-frame" data-key="7"><div class="mstack"><figure class="mfig"><img src="assets/fig/hardware_tracking_errors_box.png" alt="Approach tracking-error distributions across the three conditions. Figma slides 16&ndash;17 add annotated hardware time-lapses." loading="lazy"><figcaption>Approach tracking-error distributions across the three conditions. Figma slides 16&ndash;17 add annotated hardware time-lapses.</figcaption></figure><figure class="mfig"><img src="assets/fig/solver_timing.png" alt="Solve-time statistics across the three conditions" loading="lazy"><figcaption>Solve-time statistics across the three conditions</figcaption></figure></div></div>
+      <div class="media-frame" data-key="8"><div class="mstack"><figure class="mfig"><img src="assets/fig/land_location.png" alt="Touchdown locations relative to the landing pad" loading="lazy"><figcaption>Touchdown locations relative to the landing pad</figcaption></figure><figure class="mfig"><img src="assets/fig/flight_random.png" alt="Time-lapse landing trajectory, random target motion" loading="lazy"><figcaption>Time-lapse landing trajectory, random target motion</figcaption></figure></div></div>
+      <div class="media-frame" data-key="9"><div class="mstack"><div class="ph"><span><b>Figma slide 3 &mdash; related-work landscape</b><small>positioning map (fixed sequence &rarr; mode logic &rarr; temporal logic vs. costs &rarr; hard@nodes &rarr; hard cont-time), plus the 2018&ndash;2026 timeline</small></span></div></div></div>
+      <div class="media-frame" data-key="10"><div class="mstack"><div class="ph"><span><b>Figma slide 10 &mdash; ROS architecture</b><small>CoManDO planner, state assembly, trajectory replayer, platform adapter, target_publisher, plus the six motion glyphs</small></span></div></div></div>
+    </div>
+  </div>
+
+  <!-- TEXT -->
+  <div class="beats">
+
+    <!-- SOURCE: deck slide 2 title + captions + takeaway (verbatim) -->
+    <section class="beat" id="b1" data-media="1">
+      <h2>Full-horizon enforcement of the approach cone</h2>
+      <p>A glideslope cone imposed over the entire planning horizon admits only a narrow family of initial conditions. Three treatments of the constraint are available, and each degrades the problem in a different way.</p>
+      <p><b>start over the platform:</b> the only admissible initial condition is directly above the platform, which deletes the lateral approach and trivialises the problem.</p>
+      <p><b>ride the boundary:</b> if the optimum leaves no margin, so an ordinary tracking error puts the next initial condition outside the cone.</p>
+      <p><b>widen the cone:</b> opening it far enough to admit a realistic start leaves it too loose to shape the approach at all.</p>
+      <p class="takeaway">All three enforce the glideslope everywhere and run into different kinds of problems ... So why not impose the cone only where it actually means something?</p>
+    </section>
+
+    <section class="beat" data-media="9">
+      <h2>Positioning among conditional-constraint formulations</h2>
+      <p>Approaches to state-dependent logic in trajectory optimization divide by where the condition is enforced and by what is required of the solver. Mixed-integer and hybrid formulations introduce binaries or a prescribed mode sequence; smooth-robustness methods relax the logic into the cost; state-triggered constraints keep the condition hard while remaining continuous.</p>
+      <p>Compound state-triggered constraints and their continuous-time extension were developed within sequential convex programming. The formulation presented here carries that construction into differential dynamic programming.</p>
+    </section>
+
+    <!-- SOURCE: paper abstract + §4.1 ablation sentence (verbatim) -->
+    <section class="beat" data-media="2">
+      <h2>Feasibility and compliance under the two extremes</h2>
+      <p>The two limiting constraint configurations are evaluated on a common set of 100 randomized initial conditions, holding the solver fixed so that the difference is attributable to the constraint structure alone.</p>
+      <p>Enforcing the final-approach limits over the whole horizon renders every initial condition infeasible at <em>x</em><sub>0</sub>: 85 violate the speed bound, 88 the glideslope bound, and their union covers all 100 samples. Removing the limits restores a 100/100 landing rate, but every resulting trajectory exceeds at least one final-approach safety bound and is therefore unsuitable for hardware execution.</p>
+      <p>Neither configuration yields a planner that both converges and remains within the safety envelope, which motivates a state-dependent activation of the tightened bounds.</p>
+    </section>
+
+    <!-- SOURCE: paper §2.4.2 title + trigger sentence (verbatim) -->
+    <section class="beat" data-media="3">
+      <h2>Compound trigger geometry for the final approach</h2>
+      <div class="eq">\[ g_{\mathrm{alt}} = r_z - z_{\mathrm{trig}}, \qquad
+      g_{\mathrm{cap}} = r_{xy}^{2} - R_{\mathrm{cap}}^{2} \]</div>
+      <p>Two trigger functions gate the final approach. Each is active where its value is negative, so their conjunction restricts the tightened bounds to the region below <em>z</em><sub>trig</sub> and within a horizontal radius <em>R</em><sub>cap</sub>. Lateral capture therefore precedes any tightening, and the approach remains unconstrained while the vehicle is still aligning with the target.</p>
+      <p>The resulting landing problem carries a logical implication rather than an ordinary inequality constraint:</p>
+      <div class="eq">\[ \begin{aligned}
+        \min_{\{\mathbf x_k,\mathbf u_k,\Delta t_k\}}\;&\; \phi(\mathbf x_N)+\sum_{k=0}^{N-1}\ell_k(\mathbf x_k,\mathbf u_k,\Delta t_k)\\
+        \text{s.t.}\;&\; \mathbf x_{k+1}=f_k(\mathbf x_k,\mathbf u_k,\Delta t_k),\\
+        &\; \mathbf d_k\le\mathbf 0,\\
+        &\; g_{\mathrm{trig},k} \Rightarrow c_{\mathrm{con},k},\\
+        &\; \mathbf x_0=\mathbf x^{\mathrm{init}}.
+      \end{aligned} \]</div>
+      <div class="eq">\[ \begin{aligned}
+  c_v &= \lVert{}_{\mathcal T}\mathbf v_{\mathcal B}\rVert^{2}-(v^{\mathrm{stc}})^{2} && \text{approach speed}\\
+  c_\theta &= \sin^{2}(\theta/2)-(s_\theta^{\mathrm{stc}})^{2} && \text{tilt}\\
+  c_\omega &= \lVert{}_{\mathcal B}\boldsymbol\omega_{\mathcal B}\rVert^{2}-(\omega^{\mathrm{stc}})^{2} && \text{body rate}\\
+  c_\gamma &= r_{xy}-\tan\gamma^{\mathrm{stc}}\,(r_z+d_z) && \text{glideslope cone}\\
+  c_{T,\mathrm{hi}} &= f_z-\overline f^{\mathrm{stc}} && \text{upper thrust bound}\\
+  c_{T,\mathrm{lo}} &= \underline f^{\mathrm{stc}}-f_z && \text{lower thrust bound}
+\end{aligned} \]</div>
+      <p>Six consequences apply on activation: approach speed, tilt, body rate, the glideslope cone, and upper and lower thrust bounds. The activation instant is not prescribed; it is determined by the optimizer together with the rest of the trajectory.</p>
+    </section>
+
+    <!-- SOURCE: paper §3.2 (verbatim) -->
+    <section class="beat" id="b4" data-media="4">
+      <h2>Accumulator reformulation for constrained DDP</h2>
+      <p>An STC pairs a trigger \(g(\mathbf x)\) with a bound \(c(\mathbf x,\mathbf u)\le 0\) that must hold only where \(g(\mathbf x)<0\). The D-GMSR zero-set form encodes it as a scalar:</p>
+      <div class="eq">\[ h_{\mathrm{stc}}(\mathbf x,\mathbf u)=\bigl(-g(\mathbf x)\bigr)_+^{2}\,\bigl(c(\mathbf x,\mathbf u)\bigr)_+^{2}=0 \]</div>
+      <p>Logical AND multiplies the trigger factors; OR sums them:</p>
+      <div class="eq">\[ h_{\wedge}=\Bigl[\prod_i(-g_i)_+^{2}\Bigr]\sum_j(c_j)_+^{2},
+      \qquad h_{\vee}=\Bigl[\sum_i(-g_i)_+^{2}\Bigr]\sum_j(c_j)_+^{2} \]</div>
+      <p>The selected measures aggregate into a nonnegative integrand driving a scalar accumulator \(y\), co-integrated with the state by RK4:</p>
+      <div class="eq">\[ \dot y = H_{\mathrm{tot}}(\mathbf x,\mathbf u)\ \ge 0,
+      \qquad y_{k+1}=y_k+\frac{\Delta t_k}{6}\bigl(H_1+2H_2+2H_3+H_4\bigr) \]</div>
+      <p>The reference sequential-convex formulation bounds the growth of the accumulator on each interval. That form does not transfer to differential dynamic programming, where inequalities are enforced through interior-point log barriers that require strictly feasible iterates; a cold rollout with any positive residual violates a tight per-interval bound immediately.</p>
+      <p>The augmented-Lagrangian branch carries no such prerequisite, and the accumulator is monotone nondecreasing by construction. The entire continuous-time requirement therefore reduces to a single terminal equality.</p>
+      <div class="eq">\[ y_0 = 0,\qquad y_N = 0 \;\Longrightarrow\; H_i = 0 \ \text{ at every RK4 stage of every interval} \]</div>
+      <p>Because the accumulator is co-integrated with the physical state, the trigger is re-evaluated on the current nonlinear rollout at every quadrature point. It is neither a frozen phase label nor an after-the-fact feasibility check, and its gradient enters the backward pass through the accumulator row of the augmented dynamics.</p>
+    </section>
+
+    <!-- SOURCE: paper abstract + §4.1 (verbatim) -->
+    <section class="beat" data-media="5">
+      <h2>Comparison against the sequential-convex arm</h2>
+      <p>Both methods solve the same physical problem from the same 100 initial conditions on their native discretizations, without warm starting. cSTC-DDP returns 93 compliant landings and 98 landings in total, against 86 for the sequential-convex arm.</p>
+      <p>Median terminal position error is 6.76&times;10<sup>&minus;5</sup> m against 9.07&times;10<sup>&minus;4</sup> m, and median solve time is 0.95 s against 4.05 s, with the 95th percentile at 1.22 s against 9.51 s.</p>
+    </section>
+
+    <!-- SOURCE: paper §4.2 (verbatim) -->
+    <section class="beat" data-media="6">
+      <h2>Software-in-the-loop evaluation across target motions</h2>
+      <p>Closed-loop behaviour is evaluated in Gazebo across six planar target motions: straight, circular, figure-eight, stop-and-go, piecewise-acceleration and random-acceleration, at 50 trials per motion.</p>
+      <p>290 of the 300 trials land successfully, with the circular motion accounting for every failure at 40 of 50 and the remaining five motions at 50 of 50. A further 60 circular-motion trials introduce zero, nominal or high Gaussian uncertainty on the target position, velocity and acceleration estimates; all 60 land successfully.</p>
+    </section>
+
+    <!-- SOURCE: paper §4.3 + abstract (verbatim) -->
+    <section class="beat" data-media="10">
+      <h2>Planning and execution architecture</h2>
+      <p>The planner is exposed as a ROS 2 node with a solver core that carries no ROS types. State assembly rebases the vehicle odometry into the target-centered frame each solve; the solver returns a state, control and feedback-gain triple; and a replayer interpolates the plan against wall-clock time, handing off between the active and pending horizons.</p>
+      <p>A platform adapter isolates the airframe interface, so the same planner drives either a PX4 vehicle through MAVROS or a Crazyflie through Crazyswarm 2. Target kinematics enter through a separate publisher, which allows the estimator to be replaced without touching the planner.</p>
+    </section>
+
+    <section class="beat" data-media="7">
+      <h2>Hardware receding-horizon landing</h2>
+      <p>A Crazyflie 2.1 lands on an ST-mini unmanned ground vehicle serving as the moving target, with motion-capture pose streamed over ROS 2 and onboard inertial measurements completing the state estimate. The solver runs off-board on an AMD Ryzen 7 4800HS as a ROS 2 node.</p>
+      <p>Replanning is event-driven at approximately 5 Hz, each solve warm-started from the shifted previous solution, with median solve times of 178 to 188 ms across conditions. Median tracking error against the planned reference ranges from 40 mm in simulation to 131 mm under random target motion.</p>
+    </section>
+
+    <!-- SOURCE: paper §4.3 (verbatim) -->
+    <section class="beat" data-media="8">
+      <h2>Constraint satisfaction over the active phase</h2>
+      <p>The trigger fires between 6.56 and 8.19 s in all runs, followed by a descent phase of 0.98 to 1.42 s.</p>
+      <p>Over the active phase the executed trajectory shows zero excess on speed, tilt and thrust. Peak glideslope excess remains at or below 0.098 m, and peak body-rate excess at or below 0.477 rad/s.</p>
+    </section>
+
+  </div>
+</div>
+
+
+<div class="wrap-wide">
+<section class="wide" id="results">
+  <h2>Results</h2>
+
+  <h3>Benchmark over 100 randomized initial conditions</h3>
+  <p class="cap">Both methods solve the same problem from the same initial conditions on their native discretizations &mdash; 80 DDP intervals and 21 sequential-convex nodes &mdash; without warm starting.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Metric</th><th>cSTC-DDP (ours)</th><th>Sequential-convex arm</th></tr></thead>
+    <tbody>
+      <tr><td>Compliant landings / 100</td><td><b>93/100</b></td><td>86/100</td></tr>
+      <tr><td>All landings / 100</td><td><b>98/100</b></td><td>86/100</td></tr>
+      <tr><td>Median &lVert;e<sub>p</sub>&rVert; [m]</td><td><b>6.76&times;10<sup>&minus;5</sup></b></td><td>9.07&times;10<sup>&minus;4</sup></td></tr>
+      <tr><td>Solve time, median / p95 [s]</td><td><b>0.95 / 1.22</b></td><td>4.05 / 9.51</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Landing timing and peak active-phase excesses</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Metric</th><th>Simulated</th><th>Circling</th><th>Random</th></tr></thead>
+    <tbody>
+      <tr><td>t<sub>trig</sub> [s]</td><td>6.63</td><td><b>6.56</b></td><td>8.19</td></tr>
+      <tr><td>Landing time [s]</td><td><b>7.82</b></td><td>7.98</td><td>9.17</td></tr>
+      <tr><td>Descent time [s]</td><td>1.20</td><td>1.42</td><td><b>0.98</b></td></tr>
+      <tr><td>Glideslope excess [m]</td><td><b>0</b></td><td>0.098</td><td>0.011</td></tr>
+      <tr><td>Body-rate excess [rad/s]</td><td><b>0.048</b></td><td>0.057</td><td>0.477</td></tr>
+    </tbody>
+  </table></div>
+
+
+</section>
+
+<section class="wide" id="video">
+  <h2>Demonstration Video</h2>
+  <div class="ph" style="aspect-ratio:16/9"><span><b>Video</b><small>TO ADD &mdash; embed or self-hosted cut from the DJI footage</small></span></div>
+</section>
+
+<section class="wide" id="code">
+  <h2>Code</h2>
+  <p class="cap">TO ADD &mdash; repository link and build instructions.</p>
+</section>
+
+<section class="wide" id="bibtex">
+  <h2>BibTeX</h2>
+<pre><code>@inproceedings{noh2026cstcddp,
+  title     = {Compound State-Triggered Constrained {DDP} for Receding-Horizon
+               Quadrotor Landing on a Moving Platform},
+  author    = {Noh, SungJin and Kim, Yong-Hee and Kim, Yeohosua and Kim, Kwang-Ki K.},
+  booktitle = {International Conference on Control, Automation and Systems (ICCAS)},
+  year      = {2026}
+}</code></pre>
+</section>
+
+<section class="wide" id="references">
+  <h2>References</h2>
+  <ol class="refs">
+    <li>Z. Shen, G. Zhou, H. Huang, C. Huang, Y. Wang, and F.-Y. Wang, &ldquo;Convex optimization-based trajectory planning for quadrotors landing on aerial vehicle carriers,&rdquo; <i>IEEE Trans. Intell. Vehicles</i>, vol. 9, no. 1, pp. 138&ndash;150, Jan. 2024.</li>
+    <li>L.-Y. Lo, B. Li, C.-Y. Wen, and C.-W. Chang, &ldquo;Experimental nonrobocentric dynamic landing of quadrotor UAVs with on-ground sensor suite,&rdquo; <i>IEEE Trans. Instrum. Meas.</i>, vol. 73, Art. no. 7509113, 2024.</li>
+    <li>J. Chen, L. Xu, H. Ebel, and P. Eberhard, &ldquo;An online optimization-based trajectory planning approach for cooperative landing tasks,&rdquo; in <i>Proc. IEEE/RSJ IROS</i>, 2025, pp. 12108&ndash;12114.</li>
+    <li>B. Zhang et al., &ldquo;CoNi-MPC: Cooperative non-inertial frame-based model predictive control,&rdquo; <i>IEEE Robot. Autom. Lett.</i>, vol. 8, no. 12, pp. 8082&ndash;8089, Dec. 2023.</li>
+    <li>D. Falanga, A. Zanchettin, A. Simovic, J. Delmerico, and D. Scaramuzza, &ldquo;Vision-based autonomous quadrotor landing on a moving platform,&rdquo; in <i>Proc. IEEE SSRR</i>, 2017, pp. 200&ndash;207.</li>
+    <li>K. Xia, S.-M. Lee, W. Chung, Y. Zou, and H. Son, &ldquo;Moving target landing of a quadrotor using robust optimal guaranteed cost control,&rdquo; <i>IEEE/CAA J. Autom. Sinica</i>, vol. 10, no. 3, pp. 819&ndash;821, Mar. 2023.</li>
+    <li>P. Serra, R. Cunha, T. Hamel, D. Cabecinhas, and C. Silvestre, &ldquo;Landing of a quadrotor on a moving target using dynamic image-based visual servo control,&rdquo; <i>IEEE Trans. Robot.</i>, vol. 32, no. 6, pp. 1524&ndash;1535, Dec. 2016.</li>
+    <li>M. Szmuk, T. P. Reynolds, B. A&ccedil;&#305;kme&#351;e, M. Mesbahi, and J. M. Carson, &ldquo;Successive convexification for 6-DoF powered descent guidance with compound state-triggered constraints,&rdquo; in <i>Proc. AIAA SciTech Forum</i>, 2019, Art. no. AIAA 2019-0926.</li>
+    <li>S. Uzun, P. Elango, P.-L. Garoche, and B. A&ccedil;&#305;kme&#351;e, &ldquo;Optimization with temporal and logical specifications via generalized mean-based smooth robustness measures,&rdquo; arXiv:2405.10996, 2024.</li>
+    <li>S. Uzun, B. A&ccedil;&#305;kme&#351;e, and J. M. Carson, &ldquo;Sequential convex programming for 6-DoF powered descent guidance with continuous-time compound state-triggered constraints,&rdquo; in <i>Proc. AIAA SciTech Forum</i>, 2025, Art. no. AIAA 2025-1895.</li>
+    <li>T. A. Howell, K. Tracy, S. Le Cleac&rsquo;h, and Z. Manchester, &ldquo;CALIPSO: A differentiable solver for trajectory optimization with conic and complementarity constraints,&rdquo; in <i>Robotics Research</i>, ser. SPAR, vol. 27, 2023, pp. 504&ndash;521.</li>
+    <li>T. A. Howell, B. E. Jackson, and Z. Manchester, &ldquo;ALTRO: A fast solver for constrained trajectory optimization,&rdquo; in <i>Proc. IEEE/RSJ IROS</i>, 2019, pp. 7674&ndash;7679.</li>
+    <li>A. Pavlov, I. Shames, and C. Manzie, &ldquo;Interior point differential dynamic programming,&rdquo; <i>IEEE Trans. Control Syst. Technol.</i>, vol. 29, no. 6, pp. 2720&ndash;2727, Nov. 2021.</li>
+    <li>C. R. Hayner et al., &ldquo;OpenSCvx: An open-source modular and extensible nonlinear trajectory planning package,&rdquo; arXiv:2608.21631, 2026.</li>
+    <li>D. Mellinger and V. Kumar, &ldquo;Minimum snap trajectory generation and control for quadrotors,&rdquo; in <i>Proc. IEEE ICRA</i>, 2011, pp. 2520&ndash;2525.</li>
+  </ol>
+</section>
+
+</div>
+
+<footer>Prototype — placeholder media. Inha University · CORA</footer>
+
+<script>
+(function(){
+  var frames={}, beats=document.querySelectorAll('.beat[data-media]'),
+      rail=document.getElementById('rail'),
+      items=[].slice.call(document.querySelectorAll('.rail-item')),
+      hero=document.querySelector('.hero');
+  document.querySelectorAll('.media-frame').forEach(function(f){frames[f.dataset.key]=f;});
+
+  items.forEach(function(it){
+    it.addEventListener('click',function(){
+      var t = it.dataset.sec ? document.getElementById(it.dataset.sec)
+                             : document.querySelector('.beat[data-media="'+it.dataset.for+'"]');
+      if(t) t.scrollIntoView({behavior:'smooth', block: it.dataset.sec ? 'start' : 'center'});
+    });
+  });
+
+  function mark(pred){ items.forEach(function(it){ it.classList.toggle('on', pred(it)); }); }
+
+  function showMedia(k){
+    for(var i in frames) frames[i].classList.toggle('is-active', i===k);
+    for(var j in frames){ var v=frames[j].querySelector('video'); if(!v) continue;
+      if(j===k){ v.play().catch(function(){}); } else { v.pause(); } }
+    mark(function(it){ return it.dataset.for===k; });
+  }
+
+  if(!('IntersectionObserver' in window)){ showMedia('1'); return; }
+
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting) showMedia(e.target.dataset.media); });
+  },{rootMargin:'-45% 0px -45% 0px',threshold:0});
+  beats.forEach(function(b){io.observe(b);});
+
+  // full-width sections: keep the last figure pinned, highlight the section
+  var io2=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){
+      var id=e.target.id;
+      mark(function(it){ return it.dataset.sec===id; });
+    }});
+  },{rootMargin:'-40% 0px -55% 0px',threshold:0});
+  document.querySelectorAll('.wide[id]').forEach(function(w){io2.observe(w);});
+
+  // rail slides in once the hero has scrolled away, and stays for the rest
+  var io3=new IntersectionObserver(function(es){
+    es.forEach(function(e){ rail.classList.toggle('on', !e.isIntersecting); });
+  },{threshold:0});
+  if(hero) io3.observe(hero); else rail.classList.add('on');
+
+  showMedia('1');
+})();
+</script>
+</body>
+</html>
