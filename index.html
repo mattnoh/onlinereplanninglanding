@@ -118,7 +118,7 @@ thead th{border-bottom:2px solid var(--ink);font-size:.85rem;letter-spacing:.02e
 tbody tr:last-child td{border-bottom:2px solid var(--ink)}
 .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(28rem,1fr));gap:2rem 1.75rem;margin:2rem 0 0}
 /* the closing demonstration gets a wider measure than the prose, still centred */
-#video{max-width:96rem}
+#video{max-width:none;padding-left:clamp(1.5rem,5vw,7rem);padding-right:clamp(1.5rem,5vw,7rem)}
 #video .mgrid{grid-template-columns:repeat(2,1fr);gap:2rem}
 @media (max-width:900px){#video .mgrid{grid-template-columns:1fr}}
 .mgrid-item{margin:0}
