@@ -118,7 +118,7 @@ thead th{border-bottom:2px solid var(--ink);font-size:.85rem;letter-spacing:.02e
 tbody tr:last-child td{border-bottom:2px solid var(--ink)}
 .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(28rem,1fr));gap:2rem 1.75rem;margin:2rem 0 0}
 /* the closing demonstration breaks out of the text measure; heading and caption stay put */
-#video .mgrid{margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding:0 clamp(1rem,3vw,3rem);gap:1.5rem}
+#video .mgrid{grid-template-columns:1fr;margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);padding:0 clamp(1rem,3vw,3rem);gap:2rem}
 @media (max-width:900px){#video .mgrid{margin-left:0;margin-right:0;padding:0}}
 .mgrid-item{margin:0}
 .mgrid-item video,.mgrid-item img{width:100%;display:block;background:var(--bg)}
