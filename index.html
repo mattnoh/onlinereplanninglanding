@@ -36,6 +36,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line
 h1{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4.4vw,4rem);line-height:1.15;margin:0 0 1rem}
 .venue{color:var(--muted);font-size:1rem;margin:.25rem 0}
 .authors{font-weight:700;margin:1.5rem 0 .25rem}
+.hero-summary{max-width:44rem;margin:1.25rem auto;color:#343942;font-size:1.0625rem;line-height:1.65}
 
 /* ---------- scrollytelling ---------- */
 .scrolly{display:block;margin-left:var(--rail)}
@@ -68,7 +69,7 @@ mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:.35rem 0
 mjx-container{font-size:.88em}
 .eq{border-left:2px solid var(--accent-soft);padding-left:1rem;margin:1.25rem 0}
 @media (max-width:900px){mjx-container{font-size:.9em}}
-.hero-media img{width:100%;height:100%;object-fit:cover;opacity:.28}
+.hero-media img{width:100%;height:100%;object-fit:cover;opacity:.12}
 .ph-note{position:absolute;bottom:1rem;left:0;right:0;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .mfig{margin:0;width:100%;display:flex;flex-direction:column;justify-content:center;gap:.6rem}
 .mfig img{width:100%;object-fit:contain;background:var(--bg)}
@@ -148,7 +149,6 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
 .rail-item:hover{color:#fff}
 .rail-item.on{color:#fff;background:var(--accent-deep);border-left-color:var(--accent)}
 .rail-item{min-height:44px;display:flex;align-items:center}
-.rail-item{min-height:44px;display:flex;align-items:center}
 /* ---------- responsive reading layout ---------- */
 img,video{max-width:100%}
 .hero-inner,.beats,.beat,.media,.media-frame,.mstack,.mgrid-item{min-width:0}
@@ -172,7 +172,7 @@ body .inline-media{display:block;margin:1.5rem 0 2rem;position:static;padding:0;
 body .mstack{height:auto;gap:1.5rem;display:flex}
 body .mstack .mfig,body .mrow .mfig{flex:initial;height:auto;overflow:visible}
 body .mfig img,body .mfig video{display:block;width:100%;height:auto;max-width:100%;margin:0;object-fit:contain}
-body .mrow{grid-template-columns:1fr;height:auto;gap:1.5rem;flex:none}
+body .mrow{grid-template-columns:repeat(2,minmax(0,1fr));height:auto;gap:1.5rem;flex:none}
 body .mgrid.mgrid-pane{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;flex:initial;gap:1.25rem}
 body .mgrid.mgrid-pane video{height:auto}
 body .fig4{padding-top:0}
@@ -182,12 +182,14 @@ body .mfig figcaption{font-size:.85rem}
   .rail{display:none!important}
   body .scrolly,body .wrap-wide{margin-left:0}
   body .beat{padding:3rem 1.25rem}
+  body .mrow{grid-template-columns:1fr}
   body .beats{max-width:52rem}
   .hero{min-height:0;padding:4rem 1.25rem 3rem}
   h1{font-size:clamp(1.85rem,5vw,3rem);line-height:1.18}
   .hero-media img{opacity:.12}
   .hero .authors{font-size:.95rem;line-height:1.8}
   .hero .venue{font-size:.9rem}
+  .hero-summary{font-size:.95rem}
   .wide,.wrap-wide > .wide:first-child{padding:3rem 1.25rem}
   .wide h2{font-size:1.6rem}
   #video{padding:3rem 1.25rem}
@@ -217,6 +219,7 @@ body .mfig figcaption{font-size:.85rem}
   <div class="hero-inner">
     <h1>Compound State-Triggered Constrained DDP for Receding-Horizon Quadrotor Landing on a Moving Platform</h1>
     <p class="venue">ICCAS 2026</p>
+    <p class="hero-summary">A quadrotor lands on a moving platform using online trajectory optimization, with tighter approach limits activated inside the final capture region.</p>
     <p class="authors">SungJin Noh · Yong-Hee Kim · Yeohosua Kim · Kwang-Ki K. Kim</p>
     <p class="venue">Department of Electrical and Computer Engineering, Inha University</p>
   </div>
@@ -256,7 +259,7 @@ body .mfig figcaption{font-size:.85rem}
   <a class="rail-item" data-for="10" href="#b10">ROS wrapper</a>
   <a class="rail-item" data-for="7" href="#b7">Hardware</a>
   <a class="rail-item" data-for="8" href="#b8">Landing timing</a>
-  <div class="rail-group">Paper</div>
+  <div class="rail-group">Media &amp; references</div>
 
   <a class="rail-item" data-sec="video" href="#video">Video</a>
   <a class="rail-item" data-sec="references" href="#references">References</a>
@@ -271,10 +274,10 @@ body .mfig figcaption{font-size:.85rem}
       <h2>Problems with landing on a moving platform</h2>
       <div class="media-frame inline-media" data-key="1"><div class="mstack"><figure class="mfig"><img src="assets/fig/cone_panels.png" alt="Three treatments of the glideslope cone: start over the platform, enforce over the whole horizon, or remove it" loading="lazy"><figcaption>Three treatments of the approach cone, and how each one degrades the problem</figcaption></figure></div></div>
       <p>A glideslope cone imposed over the entire planning horizon admits only a narrow family of initial conditions. Three treatments of the constraint are available, and each degrades the problem in a different way.</p>
-      <p><b>start over the platform:</b> the only admissible initial condition is directly above the platform, which deletes the lateral approach and trivialises the problem.</p>
-      <p><b>ride the boundary:</b> if the optimum leaves no margin, so an ordinary tracking error puts the next initial condition outside the cone.</p>
+      <p><b>start over the platform:</b> choosing only starts directly above the platform sidesteps the lateral approach rather than solving it.</p>
+      <p><b>ride the boundary:</b> an optimum with little margin can leave the next initial condition outside the cone after a tracking error.</p>
       <p><b>widen the cone:</b> opening it far enough to admit a realistic start leaves it too loose to shape the approach at all.</p>
-      <p class="takeaway">All three enforce the glideslope everywhere and run into different kinds of problems ... So why not impose the cone only where it actually means something?</p>
+      <p class="takeaway">The final-approach cone should shape the landing without ruling out the earlier lateral approach. State-triggered constraints activate the tighter bounds inside the capture region.</p>
       <div class="problem-context" aria-labelledby="related-work-heading">
         <h3 id="related-work-heading">Where this fits in related work</h3>
         <p>Approaches to state-dependent logic in trajectory optimization differ in how they enforce a condition. Mixed-integer and hybrid formulations introduce binary decisions or a prescribed mode sequence; smooth-robustness methods relax the logic into the cost; state-triggered constraints keep the condition hard while remaining continuous.</p>
@@ -285,7 +288,7 @@ body .mfig figcaption{font-size:.85rem}
     <section class="beat" id="b11" data-media="11">
       <h2>Receding-Horizon Loop</h2>
       <div class="media-frame inline-media" data-key="11"><div class="mstack"><figure class="mfig"><img src="assets/fig/ros_architecture.png" alt="Closed-loop architecture: state assembly, CoManDo solver and trajectory replayer, with the warm start taken from the previous plan shifted, and an active/pending handoff in the replayer" loading="lazy"><figcaption>The loop: each solve is warm started from the previous plan shifted, and the replayer hands off between the active and pending horizons</figcaption></figure></div></div>
-      <p>Because the constant-acceleration predictor is only locally valid, the OCP is re-solved at each replanning instant from the latest state estimate. Each solve spans a fixed number of \(N\) intervals with free time steps \(\Delta t_k\), so the horizon duration \(\sum_{k=0}^{N-1}\Delta t_k\) is itself an optimization variable and shrinks as the vehicle approaches touchdown.</p>
+      <p>Because the constant-acceleration predictor is only locally valid, the OCP is re-solved at each replanning instant from the latest state estimate. Each solve spans a fixed number of \(N\) intervals with free time steps \(\Delta t_k\), so the horizon duration \(\sum_{k=0}^{N-1}\Delta t_k\) is itself an optimization variable and can shorten as the vehicle approaches touchdown.</p>
       <p>Only a short prefix of the resulting plan is executed, and the next solve is warm-started from the shifted solution. The full horizon is retained at every cycle so that the terminal touchdown conditions and STC approach bounds remain enforced.</p>
     </section>
 
@@ -297,39 +300,40 @@ body .mfig figcaption{font-size:.85rem}
       <h2>Final-Approach Constraints</h2>
       <div class="media-frame inline-media" data-key="3"><div class="mstack"><figure class="mfig"><img src="assets/fig/single_horizon_stc_paper_3d.png" alt="(a) Planned trajectory for a stationary target" loading="lazy"><figcaption>(a) Planned trajectory for a stationary target<span class="src">Paper, Fig. 2a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/single_horizon_stc_paper_states.png" alt="(b) State and input histories during the open-loop solve" loading="lazy"><figcaption>(b) State and input histories during the open-loop solve<span class="src">Paper, Fig. 2b</span></figcaption></figure></div></div>
       <p>The final approach uses a compound state-triggered constraint (STC) with trigger functions</p>
-      <div class="eq">\[ g_{\mathrm{alt}} = r_z - z_{\mathrm{trig}}, \qquad
-      g_{\mathrm{cap}} = r_{xy}^{2} - R_{\mathrm{cap}}^{2} \tag{11} \]</div>
+      <div class="eq">\[ \begin{aligned} g_{\mathrm{alt}} &= r_z - z_{\mathrm{trig}}, \\
+      g_{\mathrm{cap}} &= r_{xy}^{2} - R_{\mathrm{cap}}^{2} \end{aligned} \]</div>
       <p>Each trigger is active for \(g<0\); their AND therefore applies the tightened bounds only below \(z_{\mathrm{trig}}\) and within \(R_{\mathrm{cap}}\), so lateral capture precedes tightening.</p>
+      <p>Let \(\bm d_k\le\bm 0\) collect the path bounds and the time-step bounds. Let \(\bm g_{\mathrm{trig},k}\) collect the two trigger functions, and let \(\bm c_{\mathrm{con},k}\) collect the six consequence functions; vector inequalities are componentwise. For \(k=0,\ldots,N-1\), the complete landing OCP is</p>
       <div class="eq">\[ \begin{aligned}
         \min_{\{\mathbf x_k,\mathbf u_k,\Delta t_k\}}\;&\; \phi(\mathbf x_N)+\sum_{k=0}^{N-1}\ell_k(\mathbf x_k,\mathbf u_k,\Delta t_k)\\
         \text{s.t.}\;&\; \mathbf x_{k+1}=f_k(\mathbf x_k,\mathbf u_k,\Delta t_k),\\
         &\; \mathbf d_k\le\mathbf 0,\\
         &\; \bm g_{\mathrm{trig},k}<\bm 0 \;\Longrightarrow\; \bm c_{\mathrm{con},k}\le\bm 0,\\
         &\; \mathbf x_0=\mathbf x^{\mathrm{init}}.
-      \end{aligned} \tag{12} \]</div>
-      <p>With \(s_\theta^{\mathrm{stc}}=\sin(\theta^{\mathrm{stc}}/2)\), where \(\theta\) denotes the tilt angle from vertical, the triggered consequences are</p>
+      \end{aligned} \]</div>
+      <p>With \(s_\theta^{\mathrm{stc}}=\sin(\theta^{\mathrm{stc}}/2)\), where \(\theta\) denotes the tilt angle from vertical, the six triggered consequences bound approach speed, tilt, body rate, the glideslope cone, and upper/lower thrust:</p>
       <div class="eq">\[ \begin{aligned}
-  c_v &= \lVert{}_{\mathcal T}\mathbf v_{\mathcal B}\rVert^{2}-(v^{\mathrm{stc}})^{2} && \text{approach speed}\\
-  c_\theta &= \sin^{2}(\theta/2)-(s_\theta^{\mathrm{stc}})^{2} && \text{tilt}\\
-  c_\omega &= \lVert{}_{\mathcal B}\boldsymbol\omega_{\mathcal B}\rVert^{2}-(\omega^{\mathrm{stc}})^{2} && \text{body rate}\\
-  c_\gamma &= r_{xy}-\tan\gamma^{\mathrm{stc}}\,(r_z+d_z) && \text{glideslope cone}\\
-  c_{T,\mathrm{hi}} &= f_z-\overline f^{\mathrm{stc}} && \text{upper thrust bound}\\
-  c_{T,\mathrm{lo}} &= \underline f^{\mathrm{stc}}-f_z && \text{lower thrust bound}
-\end{aligned} \tag{13} \]</div>
-      <p>Let \(\bm d_k\le\bm 0\) collect the path bounds and the time-step bounds. Let \(\bm g_{\mathrm{trig},k}\) collect the two trigger functions, and let \(\bm c_{\mathrm{con},k}\) collect the six consequence functions; vector inequalities are componentwise. For \(k=0,\ldots,N-1\), the complete landing OCP is</p>
+  c_v &= \lVert{}_{\mathcal T}\mathbf v_{\mathcal B}\rVert^{2}-(v^{\mathrm{stc}})^{2}\\
+  c_\theta &= \sin^{2}(\theta/2)-(s_\theta^{\mathrm{stc}})^{2}\\
+  c_\omega &= \lVert{}_{\mathcal B}\boldsymbol\omega_{\mathcal B}\rVert^{2}-(\omega^{\mathrm{stc}})^{2}\\
+  c_\gamma &= r_{xy}-\tan\gamma^{\mathrm{stc}}\,(r_z+d_z)\\
+  c_{T,\mathrm{hi}} &= f_z-\overline f^{\mathrm{stc}}\\
+  c_{T,\mathrm{lo}} &= \underline f^{\mathrm{stc}}-f_z
+\end{aligned} \]</div>
     </section>
     <section class="beat" id="b12" data-media="12">
       <h2>Differential Dynamic Programming</h2>
       <p>The physical state is extended with absolute time \(t_k\) and the scalar STC accumulator \(y_k\) to form</p>
-      <div class="eq">\[ \tilde{\bm x}_k=\bigl[\,\bm x_k^\top\ \ t_k\ \ y_k\,\bigr]^\top\in\mathbb R^{15} \tag{14} \]</div>
+      <div class="eq">\[ \tilde{\bm x}_k=\bigl[\,\bm x_k^\top\ \ t_k\ \ y_k\,\bigr]^\top\in\mathbb R^{15} \]</div>
       <p>and the physical control \(\bm u_k\in\mathbb R^4\) is extended with the free time step \(\Delta t_k\) to form</p>
-      <div class="eq">\[ \tilde{\bm u}_k=\bigl[\,\bm u_k^\top\ \ \Delta t_k\,\bigr]^\top\in\mathbb R^{5} \tag{15} \]</div>
+      <div class="eq">\[ \tilde{\bm u}_k=\bigl[\,\bm u_k^\top\ \ \Delta t_k\,\bigr]^\top\in\mathbb R^{5} \]</div>
       <p>With \(\tilde{\bm x}_{k+1}=\tilde f_k(\tilde{\bm x}_k,\tilde{\bm u}_k)\), DDP builds the Bellman recursion</p>
       <div class="eq">\[ \begin{aligned}
         V_k(\tilde{\bm x}_k) &= \min_{\tilde{\bm u}_k} Q_k(\tilde{\bm x}_k,\tilde{\bm u}_k),\\
-        Q_k(\tilde{\bm x}_k,\tilde{\bm u}_k) &= \ell_k(\bm x_k,\bm u_k,\Delta t_k)+V_{k+1}\!\left(\tilde f_k(\tilde{\bm x}_k,\tilde{\bm u}_k)\right)
-      \end{aligned} \tag{16} \]</div>
-      <p>Related constrained-DDP methods include ALTRO and IPDDP; here, constraints use the primal-dual ALM/IPM structure of CALIPSO: cone inequalities are absorbed by IPM log barriers, which require strictly feasible iterates, while terminal equalities are handled by an ALM update, which accepts infeasible iterates.</p>
+        Q_k(\tilde{\bm x}_k,\tilde{\bm u}_k) &= \ell_k(\bm x_k,\bm u_k,\Delta t_k)\\
+        &\quad+V_{k+1}\!\left(\tilde f_k(\tilde{\bm x}_k,\tilde{\bm u}_k)\right)
+      \end{aligned} \]</div>
+      <p>Related constrained-DDP methods include ALTRO and IPDDP. Here, the solver uses a CALIPSO-style augmented-Lagrangian/interior-point structure: cone inequalities use an interior-point treatment, while terminal equalities use augmented-Lagrangian updates. The STC terminal residual can therefore be nonzero during optimization.</p>
     </section>
 
 
@@ -338,38 +342,39 @@ body .mfig figcaption{font-size:.85rem}
       <h2>State-Triggered Constraints in DDP</h2>
       <div class="media-frame inline-media" data-key="4"><div class="mstack"><figure class="mfig"><img src="assets/fig/stc_paper_3d.png" alt="(a) Trajectories in the world and target-centered frames" loading="lazy"><figcaption>(a) Trajectories in the world and target-centered frames<span class="src">Paper, Fig. 3a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/stc_paper_states.png" alt="(b) State and input histories during online replanning" loading="lazy"><figcaption>(b) State and input histories during online replanning<span class="src">Paper, Fig. 3b</span></figcaption></figure></div></div>
       <p>An STC pairs a trigger function \(g(\bm x)\) with a bound \(c(\bm x,\bm u)\le 0\) that must hold only in the region where \(g(\bm x)<0\). Adopting the D-GMSR zero-set form, with \((a)_+=\max(0,a)\), this state-conditioned bound is encoded by the scalar</p>
-      <div class="eq">\[ h_{\mathrm{stc}}(\mathbf x,\mathbf u)=\bigl(-g(\mathbf x)\bigr)_+^{2}\,\bigl(c(\mathbf x,\mathbf u)\bigr)_+^{2}=0 \tag{18} \]</div>
+      <div class="eq">\[ h_{\mathrm{stc}}(\mathbf x,\mathbf u)=\bigl(-g(\mathbf x)\bigr)_+^{2}\,\bigl(c(\mathbf x,\mathbf u)\bigr)_+^{2}=0 \]</div>
       <p>For multiple triggers, compound STCs represent logical AND by multiplying the trigger factors and logical OR by summing them:</p>
-      <div class="eq">\[ h_{\wedge}=\Bigl[\prod_i(-g_i)_+^{2}\Bigr]\sum_j(c_j)_+^{2},
-      \qquad h_{\vee}=\Bigl[\sum_i(-g_i)_+^{2}\Bigr]\sum_j(c_j)_+^{2} \tag{19,20} \]</div>
+      <div class="eq">\[ \begin{aligned}h_{\wedge}&=\Bigl[\prod_i(-g_i)_+^{2}\Bigr]\sum_j(c_j)_+^{2},\\
+      h_{\vee}&=\Bigl[\sum_i(-g_i)_+^{2}\Bigr]\sum_j(c_j)_+^{2}\end{aligned} \]</div>
       <p>Squaring the positive-part factors ensures \(C^1\) smoothness at every switching boundary, which is essential for gradient-based optimization. Following the CT-cSTC reformulation, the selected STC measures are aggregated into a single nonnegative integrand, and a scalar accumulator \(y\), initialized at \(y_0=0\), evolves according to</p>
-      <div class="eq">\[ \dot y = H_{\mathrm{tot}}(\mathbf x,\mathbf u)\ \ge 0,
-      \qquad y_{k+1}=y_k+\frac{\Delta t_k}{6}\bigl(H_1+2H_2+2H_3+H_4\bigr) \tag{22} \]</div>
-      <p>The reference SCP formulation expresses this continuous-time condition as a per-interval inequality \(y_{k+1}-y_k\le\beta_k\). This per-interval form does not transfer to DDP: DDP inequalities are enforced through interior-point log barriers, which require strictly feasible iterates. We therefore enforce this requirement on \(y\) through a single terminal equality rather than through per-interval inequalities.</p>
-      <div class="eq">\[ y_0 = 0,\qquad y_N = 0 \;\Longrightarrow\; H_i = 0 \ \text{ at every RK4 stage of every interval} \]</div>
-      <p class="prop"><b>Proposition 1.</b> Consider the RK4 accumulator update above, where \(H_i\ge 0\) at all RK4 stages and \(\Delta t_k>0\). If \(y_0=0\) and the terminal equality \(y_N=0\) holds, then \(H_i=0\) for every RK4 stage of every interval.</p>
+      <div class="eq">\[ \begin{aligned}\dot y &= H_{\mathrm{tot}}(\mathbf x,\mathbf u)\ \ge 0,\\
+      S_k&=H_1+2H_2+2H_3+H_4,\\
+      y_{k+1}&=y_k+\frac{\Delta t_k}{6}S_k\end{aligned} \]</div>
+      <p>The reference SCP formulation uses per-interval budgets \(y_{k+1}-y_k\le\beta_k\). This implementation instead handles a single terminal condition \(y_N=0\) through its augmented-Lagrangian branch, allowing a nonzero accumulator residual during optimization. Positive per-interval budgets can also be represented in DDP; the terminal form is a choice of this implementation.</p>
+      <div class="eq">\[ y_0 = 0,\qquad y_N = 0 \;\Longrightarrow\; H_i = 0 \]</div>
+      <p class="prop"><b>Proposition 1.</b> Consider the RK4 accumulator update above, where \(H_i\ge 0\) at all RK4 stages and \(\Delta t_k>0\). If \(y_0=0\) and the terminal equality \(y_N=0\) holds exactly, then \(H_i=0\) for every RK4 stage of every interval.</p>
+      <p class="cap">This implication concerns the discrete RK4 stages under exact equality. Finite solver tolerances and behavior between quadrature stages require separate checks; hardware tracking can also produce physical constraint excesses.</p>
       <p>The trigger enters the backward pass through the \(y_k\) row of the augmented dynamics. Partitioning \(V_{\tilde x,k+1}=[\,V_{x,k+1}^\top,\,V_{t,k+1},\,V_{y,k+1}\,]^\top\), the Bellman chain rule expands by block rows as</p>
-      <div class="eq">\[ Q_{\tilde u,k}=\ell_{\tilde u,k}
-        +\tilde f_{\tilde u,k}^{x\top}V_{x,k+1}
-        +\tilde f_{\tilde u,k}^{t\top}V_{t,k+1}
-        +\underbrace{\tilde f_{\tilde u,k}^{y\top}V_{y,k+1}}_{\text{STC feedback}} \tag{23} \]</div>
-      <p>The terminal equality \(y_N=0\) produces a nonzero \(V_{y,N}\), and this gradient propagates backward through every stage.</p>
+      <div class="eq">\[ \begin{aligned}Q_{\tilde u,k}&=\ell_{\tilde u,k}+\tilde f_{\tilde u,k}^{x\top}V_{x,k+1}\\
+        &\quad+\tilde f_{\tilde u,k}^{t\top}V_{t,k+1}\\
+        &\quad+\underbrace{\tilde f_{\tilde u,k}^{y\top}V_{y,k+1}}_{\text{STC feedback}}\end{aligned} \]</div>
+      <p>The terminal augmented-Lagrangian term contributes to \(V_{y,N}\), and the backward pass combines it with the accumulator-dynamics sensitivities. This contribution need not be nonzero: squared positive-part densities have zero first derivatives wherever they vanish.</p>
     </section>
 
     <!-- SOURCE: paper abstract + §4.1 (verbatim) -->
     <section class="beat" id="results" data-media="5">
       <h2>Randomized Initial-Condition Benchmark</h2>
-      <div class="media-frame inline-media" data-key="5"><div class="mstack"><figure class="mfig fig4"><img src="assets/fig/cloud_cstc_openscvx_100ic.png" alt="Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange)." loading="lazy"><figcaption>Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange).<span class="src">Paper, Fig. 4</span></figcaption></figure><figure class="mfig mtab"><figcaption>Benchmark over 100 randomized initial conditions<span class="src">Paper, Tab. 1</span></figcaption><div class="tw"><table><thead><tr><th>Metric</th><th>cSTC-DDP</th><th>SCP arm</th></tr></thead><tbody><tr><td>Compliant landings / 100</td><td><b>93/100</b></td><td>86/100</td></tr><tr><td>All landings / 100</td><td><b>98/100</b></td><td>86/100</td></tr><tr><td>Median &lVert;e<sub>p</sub>&rVert; [m]</td><td><b>6.76&times;10<sup>&minus;5</sup></b></td><td>9.07&times;10<sup>&minus;4</sup></td></tr><tr><td>Solve time, med / p95 [s]</td><td><b>0.95 / 1.22</b></td><td>4.05 / 9.51</td></tr></tbody></table></div></figure></div></div>
+      <div class="media-frame inline-media" data-key="5"><div class="mstack"><figure class="mfig fig4"><img src="assets/fig/cloud_cstc_openscvx_100ic.png" alt="Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange)." loading="lazy"><figcaption>Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange).<span class="src">Paper, Fig. 4</span></figcaption></figure><figure class="mfig mtab"><figcaption>Benchmark over 100 randomized initial conditions<span class="src">Paper, Tab. 1</span></figcaption><div class="tw"><table><thead><tr><th>Metric</th><th>cSTC-DDP</th><th>SCP arm</th></tr></thead><tbody><tr><td>Compliant landings / 100</td><td><b>93/100</b></td><td>86/100</td></tr><tr><td>All landings / 100</td><td><b>98/100</b></td><td>86/100</td></tr><tr><td>Median ‖e<sub>p</sub>‖ [m]</td><td><b>6.76&times;10<sup>&minus;5</sup></b></td><td>9.07&times;10<sup>&minus;4</sup></td></tr><tr><td>Solve time, med / p95 [s]</td><td><b>0.95 / 1.22</b></td><td>4.05 / 9.51</td></tr></tbody></table></div></figure></div></div>
       <p>Tab. 1 compares the proposed cSTC-DDP with an OpenSCvx baseline using per-interval CT-cSTC. Both solve the same OCP from 100 fixed initial conditions (ICs), sampled with \(r_{xy}\in[0.25,4.5]\) m, \(r_z\in[1.7,3.0]\) m, and \(\lVert{}_{\mathcal T}\bm v_{\mathcal B}\rVert_2\in[0.2,2.95]\) m/s; below \(r_z=1.8\) m, \(r_{xy}\le 1.1\) m. Native grids use 80 DDP intervals and 21 SCvx nodes.</p>
-      <p>A landing requires finite outputs, \(\lVert\bm e_p\rVert\le 0.10\) m, \(\lVert\bm e_v\rVert\le 0.30\) m/s, and maximum hard-path excess at most \(10^{-2}\). Error medians use compliant landings; solve times use all runs and exclude initialization and auditing. Unlike the 180 ms hardware replans, these full-horizon solves have no warm start.</p>
+      <p>A landing requires finite outputs, \(\lVert\bm e_p\rVert\le 0.10\) m, \(\lVert\bm e_v\rVert\le 0.30\) m/s, and maximum hard-path excess at most \(10^{-2}\). Compliance also checks saved-node consequence tolerances: 0.05 m for geometry, 0.10 m/s for speed, 1&deg; for tilt, and 0.025 rad/s for body rate. Error medians use compliant landings; solve times use all runs and exclude initialization and auditing. Unlike the 180 ms hardware replans, these full-horizon solves have no warm start.</p>
       <p>The results show seven more compliant cSTC-DDP landings, lower median position error, and shorter solve times.</p>
       <p>With the same solver, always enforcing the final limits makes all 100 ICs infeasible at \(\bm x_0\) (85 speed, 88 glideslope; union 100); removing them also lands 100/100, but every trajectory exceeds at least one final-approach safety limit and is therefore unsuitable for hardware execution.</p>
     </section>
     <section class="beat" id="b6" data-media="6">
       <h2>SITL Target-Motion Evaluation</h2>
-      <div class="media-frame inline-media" data-key="6"><div class="mstack"><div class="mgrid mgrid-pane"><figure class="mgrid-item"><video src="assets/motions_world/circle.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Circular</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/figure8.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Figure-eight</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/straight.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Straight</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/stop_and_go.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Stop-and-go</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/piecewise_accel.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Piecewise acceleration</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/random_accel.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Random acceleration</figcaption></figure></div></div></div>
+      <div class="media-frame inline-media" data-key="6"><div class="mstack"><div class="mgrid mgrid-pane"><figure class="mgrid-item"><video src="assets/motions_world/circle.mp4" poster="teaser-posters/circle.webp" muted loop autoplay playsinline preload="metadata"></video><figcaption>Circular</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/figure8.mp4" poster="teaser-posters/figure8.webp" muted loop autoplay playsinline preload="metadata"></video><figcaption>Figure-eight</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/straight.mp4" poster="teaser-posters/straight.webp" muted loop autoplay playsinline preload="metadata"></video><figcaption>Straight</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/stop_and_go.mp4" poster="teaser-posters/stop_and_go.webp" muted loop autoplay playsinline preload="metadata"></video><figcaption>Stop-and-go</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/piecewise_accel.mp4" poster="teaser-posters/piecewise_accel.webp" muted loop autoplay playsinline preload="metadata"></video><figcaption>Piecewise acceleration</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/random_accel.mp4" poster="teaser-posters/random_accel.webp" muted loop autoplay playsinline preload="metadata"></video><figcaption>Random acceleration</figcaption></figure></div></div></div>
       <p>Gazebo-based software-in-the-loop (SITL) simulations evaluate six planar target motions: straight, circular, figure-eight, stop-and-go, piecewise-acceleration, and random-acceleration.</p>
-      <p>Across 50 trials per motion, peak target speeds are 0.40&ndash;0.50 m/s and peak accelerations are 0&ndash;0.328 m/s&sup2;; 290/300 trials land successfully (40/50 circular and 50/50 otherwise).</p>
+      <p>Across 50 trials per motion, 290/300 trials land successfully: 40/50 for circular motion and 50/50 for each of the other five motions.</p>
       <p>Another 60 circular-motion trials (20 per level) apply zero, nominal, or high Gaussian target-estimate uncertainty, with a fixed per-trial bias drawn at \(0.5\sigma\). All 60 trials land successfully.</p>
       <figure class="tfig">
         <img src="assets/fig/mc1_motion_generalization.png" alt="MC1 target-motion generalization" loading="lazy">
@@ -383,9 +388,9 @@ body .mfig figcaption{font-size:.85rem}
     <!-- SOURCE: paper §4.3 + abstract (verbatim) -->
     <section class="beat" id="b10" data-media="10">
       <h2>ROS wrapper for online planning and execution</h2>
-      <div class="media-frame inline-media" data-key="10"><div class="mstack"><figure class="mfig"><video src="assets/sitl/gazebo-v6.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Gazebo &mdash; a PX4 x500 landing on the moving platform</figcaption></figure><figure class="mfig"><video src="assets/sitl/rviz-v6.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>RViz &mdash; the planned trajectory against drone and target odometry, redrawn each solve</figcaption></figure></div></div>
-      <p>The planner is exposed as a ROS 2 node with a solver core that carries no ROS types. State assembly rebases the vehicle odometry into the target-centered frame each solve; the solver returns a state, control and feedback-gain triple; and a replayer interpolates the plan against wall-clock time, handing off between the active and pending horizons.</p>
-      <p>A platform adapter isolates the airframe interface, so the same planner drives either a PX4 vehicle through MAVROS or a Crazyflie through Crazyswarm 2. Target kinematics enter through a separate publisher, which allows the estimator to be replaced without touching the planner.</p>
+      <div class="media-frame inline-media" data-key="10"><div class="mstack"><figure class="mfig"><video src="assets/sitl/gazebo-v6.mp4" poster="teaser-posters/gazebo-v6.webp" muted loop autoplay playsinline preload="metadata"></video><figcaption>Gazebo &mdash; a PX4 x500 landing on the moving platform</figcaption></figure><figure class="mfig"><video src="assets/sitl/rviz-v6.mp4" poster="teaser-posters/rviz-v6.webp" muted loop autoplay playsinline preload="metadata"></video><figcaption>RViz &mdash; the planned trajectory against drone and target odometry, redrawn each solve</figcaption></figure></div></div>
+      <p>ROS adapters expose a solver core that carries no ROS types. State assembly rebases the vehicle odometry into the target-centered frame each solve; the solver returns a state, control and feedback-gain triple; and a replayer interpolates the plan against wall-clock time, handing off between the active and pending horizons.</p>
+      <p>A platform adapter isolates the airframe interface, with the diagram showing a ROS 1/MAVROS adapter for PX4 and a ROS 2/Crazyswarm 2 adapter for Crazyflie. Target kinematics enter through a separate publisher, which allows the estimator to be replaced without touching the planner.</p>
     </section>
 
     <section class="beat" id="b7" data-media="7">
@@ -400,7 +405,7 @@ body .mfig figcaption{font-size:.85rem}
       <h2>Landing timing and peak active-phase excesses</h2>
       <div class="media-frame inline-media" data-key="8"><div class="mstack"><figure class="mfig"><img src="assets/fig/hardware_tracking_errors_box.png" alt="Approach tracking-error distributions across the three conditions" loading="lazy"><figcaption>Approach tracking-error distributions across the three conditions<span class="src">Paper, Fig. 5</span></figcaption></figure><div class="mrow"><figure class="mfig"><img src="assets/fig/land_location.png" alt="Touchdown locations relative to the landing pad" loading="lazy"><figcaption>Touchdown locations relative to the landing pad<span class="src">Paper, Fig. 6</span></figcaption></figure><figure class="mfig"><img src="assets/fig/solver_timing.png" alt="Solve-time statistics across the three conditions" loading="lazy"><figcaption>Solve-time statistics across the three conditions<span class="src">Paper, Fig. 7</span></figcaption></figure></div></div></div>
       <p>The STC trigger fires at \(t_{\mathrm{trig}}=6.56\)&ndash;\(8.19\) s in all runs, followed by a descent phase of 0.98&ndash;1.42 s.</p>
-      <p>Speed, tilt, and thrust show zero executed excess; body-rate values use Crazyswarm 2&rsquo;s deg/s-to-rad/s conversion.</p>
+      <p>Speed, tilt, and thrust show zero executed excess in these runs. Glideslope and body-rate excesses are nonzero in some conditions, as reported in the table. Body-rate values use Crazyswarm 2&rsquo;s deg/s-to-rad/s conversion.</p>
       <figure class="tfig ttab">
         <figcaption>Landing timing and peak active-phase excesses<span class="src">Paper, Tab. 2</span></figcaption>
         <div class="tw"><table><thead><tr><th>Metric</th><th>Simulated</th><th>Circling</th><th>Random</th></tr></thead><tbody><tr><td>t<sub>trig</sub> [s]</td><td>6.63</td><td><b>6.56</b></td><td>8.19</td></tr><tr><td>Landing time [s]</td><td><b>7.82</b></td><td>7.98</td><td>9.17</td></tr><tr><td>Descent time [s]</td><td>1.20</td><td>1.42</td><td><b>0.98</b></td></tr><tr><td>Glideslope excess [m]</td><td><b>0</b></td><td>0.098</td><td>0.011</td></tr><tr><td>Body-rate excess [rad/s]</td><td><b>0.048</b></td><td>0.057</td><td>0.477</td></tr></tbody></table></div>
