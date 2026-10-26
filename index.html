@@ -17,13 +17,13 @@ window.MathJax={tex:{tags:'none',macros:{bm:['\\boldsymbol{#1}',1]},inlineMath:[
 :root{
   --ink:#111114; --muted:#5c6068; --bg:#ffffff; --bg-alt:#f5f6f8;
   --panel:#0a0a0c; --panel-ink:#ffffff;
-  --accent:#1273eb;          /* TODO pin from Figma fills */
+  --accent:#1273eb;
   --accent-deep:#1b4fcc;     /* nav-active */
   --accent-soft:#e8f0fb;
   --line:#e3e4e8;
   --serif:"Gothic A1",system-ui,sans-serif;
   --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  --media-col:clamp(24rem,44vw,46rem);
+  --rail:9.5rem;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -38,7 +38,7 @@ h1{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4.4vw,4rem);lin
 .authors{font-weight:700;margin:1.5rem 0 .25rem}
 
 /* ---------- scrollytelling ---------- */
-.scrolly{display:grid;grid-template-columns:var(--media-col) minmax(0,1fr);gap:0;margin-left:0}
+.scrolly{display:block;margin-left:var(--rail)}
 .media{position:sticky;top:0;height:100vh;background:var(--bg);border-right:1px solid var(--line)}
 .media-inner{position:absolute;inset:0}
 .mstack{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:1.6rem}
@@ -141,13 +141,19 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
   .opening-motions figcaption{font-size:.75rem}
   .motion-heading{margin-top:2.5rem}
 }
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:var(--panel);color:#fff;z-index:20;padding:1.5rem 0;overflow-y:auto;opacity:0;transform:translateX(-100%);pointer-events:none;transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1);will-change:opacity,transform}
+.rail.on{opacity:1;transform:none;pointer-events:auto}
+.rail-group{font-size:.8rem;font-weight:700;text-align:center;padding:1.1rem 0 .5rem;border-bottom:1px solid rgba(255,255,255,.3);margin:0 0 .4rem}
+.rail-item{display:block;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.72);padding:.5rem .9rem;text-decoration:none;cursor:pointer;border-left:3px solid transparent}
+.rail-item:hover{color:#fff}
+.rail-item.on{color:#fff;background:var(--accent-deep);border-left-color:var(--accent)}
+.rail-item{min-height:44px;display:flex;align-items:center}
+.rail-item{min-height:44px;display:flex;align-items:center}
 /* ---------- responsive reading layout ---------- */
 img,video{max-width:100%}
 .hero-inner,.beats,.beat,.media,.media-frame,.mstack,.mgrid-item{min-width:0}
 .hero h1{text-wrap:balance}
 .hero{padding-left:1.5rem;min-height:78svh}
-body:not(.reading-layout) .media-frame[data-key="1"] .mfig{flex:none}
-body:not(.reading-layout) .media-frame[data-key="1"] img{height:auto;max-width:100%}
 .problem-context{border-top:1px solid var(--line);padding-top:1.5rem;margin-top:1rem}
 .problem-context h3{font-size:1.05rem;line-height:1.4;margin:0 0 .75rem}
 .problem-context p{font-size:.98rem}
@@ -156,23 +162,27 @@ a:focus-visible,video:focus-visible,[tabindex]:focus-visible{outline:3px solid v
 .inline-media{display:none}
 .beat,.wide,.refs li{scroll-margin-top:2rem}
 /* Figures retain their natural dimensions when read in the document flow. */
-body.reading-layout .media{display:none}
-body.reading-layout .scrolly{margin-left:0;display:block}
-body.reading-layout .wrap-wide{margin-left:0}
-body.reading-layout .beats{max-width:52rem;margin:auto}
-body.reading-layout .beat{min-height:0;padding:3rem 1.25rem;display:block;border-bottom:1px solid var(--line)}
-body.reading-layout .beat h2{font-size:clamp(1.5rem,4vw,2rem);line-height:1.3}
-body.reading-layout .inline-media{display:block;margin:1.5rem 0 2rem;position:static;padding:0;opacity:1;transform:none;pointer-events:auto}
-body.reading-layout .mstack{height:auto;gap:1.5rem;display:flex}
-body.reading-layout .mstack .mfig,body.reading-layout .mrow .mfig{flex:initial;height:auto;overflow:visible}
-body.reading-layout .mfig img,body.reading-layout .mfig video{display:block;width:100%;height:auto;max-width:100%;margin:0;object-fit:contain}
-body.reading-layout .mrow{grid-template-columns:1fr;height:auto;gap:1.5rem;flex:none}
-body.reading-layout .mgrid.mgrid-pane{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;flex:initial;gap:1.25rem}
-body.reading-layout .mgrid.mgrid-pane video{height:auto}
-body.reading-layout .fig4{padding-top:0}
-body.reading-layout .ph{min-height:10rem;height:auto}
-body.reading-layout .mfig figcaption{font-size:.85rem}
+body .media{display:none}
+body .scrolly{margin-left:var(--rail);display:block}
+body .wrap-wide{margin-left:var(--rail)}
+body .beats{max-width:60rem;margin:auto}
+body .beat{min-height:0;padding:3.5rem 2.5rem;display:block;border-bottom:1px solid var(--line)}
+body .beat h2{font-size:clamp(1.5rem,4vw,2rem);line-height:1.3}
+body .inline-media{display:block;margin:1.5rem 0 2rem;position:static;padding:0;opacity:1;transform:none;pointer-events:auto}
+body .mstack{height:auto;gap:1.5rem;display:flex}
+body .mstack .mfig,body .mrow .mfig{flex:initial;height:auto;overflow:visible}
+body .mfig img,body .mfig video{display:block;width:100%;height:auto;max-width:100%;margin:0;object-fit:contain}
+body .mrow{grid-template-columns:1fr;height:auto;gap:1.5rem;flex:none}
+body .mgrid.mgrid-pane{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;flex:initial;gap:1.25rem}
+body .mgrid.mgrid-pane video{height:auto}
+body .fig4{padding-top:0}
+body .ph{min-height:10rem;height:auto}
+body .mfig figcaption{font-size:.85rem}
 @media(max-width:1100px){
+  .rail{display:none!important}
+  body .scrolly,body .wrap-wide{margin-left:0}
+  body .beat{padding:3rem 1.25rem}
+  body .beats{max-width:52rem}
   .hero{min-height:0;padding:4rem 1.25rem 3rem}
   h1{font-size:clamp(1.85rem,5vw,3rem);line-height:1.18}
   .hero-media img{opacity:.12}
@@ -192,7 +202,7 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
   pre{font-size:.75rem;border-radius:6px}
 }
 @media(max-width:600px){
-  body.reading-layout .mgrid.mgrid-pane{grid-template-columns:minmax(0,1fr)}
+  body .mgrid.mgrid-pane{grid-template-columns:minmax(0,1fr)}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -201,7 +211,6 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
 </style>
 </head>
 <body>
-<script>document.body.classList.toggle('reading-layout',matchMedia('(max-width:1100px), (prefers-reduced-motion:reduce)').matches);</script>
 
 <header class="hero">
   <div class="hero-media"><img src="assets/fig/flight_circle.png" alt="Time-lapse landing trajectory, circular target motion"></div>
@@ -232,31 +241,37 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
   </div>
 </section>
 
+<nav class="rail" id="rail" aria-label="Section progress">
+  <div class="rail-group">Motivation</div>
+  <a class="rail-item" data-for="1" href="#b1">Problem</a>
+  <a class="rail-item" data-for="11" href="#b11">Horizon loop</a>
+  <div class="rail-group">STC Method</div>
+  <a class="rail-item" data-for="3" href="#b3">Final approach</a>
+  <a class="rail-item" data-for="12" href="#b12">DDP</a>
+  <a class="rail-item" data-for="4" href="#b4">STC in DDP</a>
+  <div class="rail-group">Evaluation</div>
+  <a class="rail-item" data-for="5" href="#results">Benchmark</a>
+  <a class="rail-item" data-for="6" href="#b6">SITL</a>
+  <div class="rail-group">Online Execution</div>
+  <a class="rail-item" data-for="10" href="#b10">ROS wrapper</a>
+  <a class="rail-item" data-for="7" href="#b7">Hardware</a>
+  <a class="rail-item" data-for="8" href="#b8">Landing timing</a>
+  <div class="rail-group">Paper</div>
+
+  <a class="rail-item" data-sec="video" href="#video">Video</a>
+  <a class="rail-item" data-sec="code" href="#code">Code</a>
+  <a class="rail-item" data-sec="bibtex" href="#bibtex">BibTeX</a>
+  <a class="rail-item" data-sec="references" href="#references">References</a>
+</nav>
+
 <div class="scrolly">
-  <!-- PINNED MEDIA -->
-  <div class="media" id="media">
-    <div class="media-inner">
-      <div class="media-frame" data-key="1"><div class="mstack"><figure class="mfig"><img src="assets/fig/cone_panels.png" alt="Three treatments of the glideslope cone: start over the platform, enforce over the whole horizon, or remove it" loading="lazy"><figcaption>Three treatments of the approach cone, and how each one degrades the problem</figcaption></figure></div></div>
-      <div class="media-frame" data-key="3"><div class="mstack"><figure class="mfig"><img src="assets/fig/single_horizon_stc_paper_3d.png" alt="(a) Planned trajectory for a stationary target" loading="lazy"><figcaption>(a) Planned trajectory for a stationary target<span class="src">Paper, Fig. 2a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/single_horizon_stc_paper_states.png" alt="(b) State and input histories during the open-loop solve" loading="lazy"><figcaption>(b) State and input histories during the open-loop solve<span class="src">Paper, Fig. 2b</span></figcaption></figure></div></div>
-      <div class="media-frame" data-key="4"><div class="mstack"><figure class="mfig"><img src="assets/fig/stc_paper_3d.png" alt="(a) Trajectories in the world and target-centered frames" loading="lazy"><figcaption>(a) Trajectories in the world and target-centered frames<span class="src">Paper, Fig. 3a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/stc_paper_states.png" alt="(b) State and input histories during online replanning" loading="lazy"><figcaption>(b) State and input histories during online replanning<span class="src">Paper, Fig. 3b</span></figcaption></figure></div></div>
-      <div class="media-frame" data-key="5"><div class="mstack"><figure class="mfig fig4"><img src="assets/fig/cloud_cstc_openscvx_100ic.png" alt="Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange). Figma slide 9 adds a six-panel comparison and an enforcement-strategy table." loading="lazy"><figcaption>Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange). Figma slide 9 adds a six-panel comparison and an enforcement-strategy table.<span class="src">Paper, Fig. 4</span></figcaption></figure><figure class="mfig mtab"><figcaption>Benchmark over 100 randomized initial conditions<span class="src">Paper, Tab. 1</span></figcaption><div class="tw"><table><thead><tr><th>Metric</th><th>cSTC-DDP</th><th>SCP arm</th></tr></thead><tbody><tr><td>Compliant landings / 100</td><td><b>93/100</b></td><td>86/100</td></tr><tr><td>All landings / 100</td><td><b>98/100</b></td><td>86/100</td></tr><tr><td>Median &lVert;e<sub>p</sub>&rVert; [m]</td><td><b>6.76&times;10<sup>&minus;5</sup></b></td><td>9.07&times;10<sup>&minus;4</sup></td></tr><tr><td>Solve time, med / p95 [s]</td><td><b>0.95 / 1.22</b></td><td>4.05 / 9.51</td></tr></tbody></table></div></figure></div></div>
-
-      <div class="media-frame" data-key="6"><div class="mstack"><div class="mgrid mgrid-pane"><figure class="mgrid-item"><video src="assets/motions_world/circle.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Circular</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/figure8.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Figure-eight</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/straight.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Straight</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/stop_and_go.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Stop-and-go</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/piecewise_accel.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Piecewise acceleration</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/random_accel.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Random acceleration</figcaption></figure></div></div></div>
-      <div class="media-frame" data-key="11"><div class="mstack"><figure class="mfig"><img src="assets/fig/ros_architecture.png" alt="Closed-loop architecture: state assembly, CoManDo solver and trajectory replayer, with the warm start taken from the previous plan shifted, and an active/pending handoff in the replayer" loading="lazy"><figcaption>The loop: each solve is warm started from the previous plan shifted, and the replayer hands off between the active and pending horizons</figcaption></figure></div></div>
-      <div class="media-frame" data-key="12"><div class="mstack"><div class="ph"><span><b>Figma slide 7 &mdash; terminal equality to interval density</b><small>augmented state/control and the ALM/IPM split; SVG export needed</small></span></div></div></div>
-      <div class="media-frame" data-key="7"><div class="mstack"><figure class="mfig"><img src="assets/fig/flight_circle.png" alt="Time-lapse landing trajectory, circular target motion" loading="lazy"><figcaption>Time-lapse landing trajectory, circular target motion<span class="src">Paper, Fig. 1a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/flight_random.png" alt="Time-lapse landing trajectory, random target motion" loading="lazy"><figcaption>Time-lapse landing trajectory, random target motion<span class="src">Paper, Fig. 1b</span></figcaption></figure></div></div>
-      <div class="media-frame" data-key="8"><div class="mstack"><figure class="mfig"><img src="assets/fig/hardware_tracking_errors_box.png" alt="Approach tracking-error distributions across the three conditions" loading="lazy"><figcaption>Approach tracking-error distributions across the three conditions<span class="src">Paper, Fig. 5</span></figcaption></figure><div class="mrow"><figure class="mfig"><img src="assets/fig/land_location.png" alt="Touchdown locations relative to the landing pad" loading="lazy"><figcaption>Touchdown locations relative to the landing pad<span class="src">Paper, Fig. 6</span></figcaption></figure><figure class="mfig"><img src="assets/fig/solver_timing.png" alt="Solve-time statistics across the three conditions" loading="lazy"><figcaption>Solve-time statistics across the three conditions<span class="src">Paper, Fig. 7</span></figcaption></figure></div></div></div>
-
-      <div class="media-frame" data-key="10"><div class="mstack"><figure class="mfig"><video src="assets/sitl/gazebo-v6.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Gazebo &mdash; a PX4 x500 landing on the moving platform</figcaption></figure><figure class="mfig"><video src="assets/sitl/rviz-v6.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>RViz &mdash; the planned trajectory against drone and target odometry, redrawn each solve</figcaption></figure></div></div>
-    </div>
-  </div>
-
   <!-- TEXT -->
   <div class="beats">
 
     <!-- SOURCE: deck slide 2 title + captions + takeaway (verbatim) -->
     <section class="beat" id="b1" data-media="1">
       <h2>Problems with landing on a moving platform</h2>
+      <div class="media-frame inline-media" data-key="1"><div class="mstack"><figure class="mfig"><img src="assets/fig/cone_panels.png" alt="Three treatments of the glideslope cone: start over the platform, enforce over the whole horizon, or remove it" loading="lazy"><figcaption>Three treatments of the approach cone, and how each one degrades the problem</figcaption></figure></div></div>
       <p>A glideslope cone imposed over the entire planning horizon admits only a narrow family of initial conditions. Three treatments of the constraint are available, and each degrades the problem in a different way.</p>
       <p><b>start over the platform:</b> the only admissible initial condition is directly above the platform, which deletes the lateral approach and trivialises the problem.</p>
       <p><b>ride the boundary:</b> if the optimum leaves no margin, so an ordinary tracking error puts the next initial condition outside the cone.</p>
@@ -271,6 +286,7 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
 
     <section class="beat" id="b11" data-media="11">
       <h2>Receding-Horizon Loop</h2>
+      <div class="media-frame inline-media" data-key="11"><div class="mstack"><figure class="mfig"><img src="assets/fig/ros_architecture.png" alt="Closed-loop architecture: state assembly, CoManDo solver and trajectory replayer, with the warm start taken from the previous plan shifted, and an active/pending handoff in the replayer" loading="lazy"><figcaption>The loop: each solve is warm started from the previous plan shifted, and the replayer hands off between the active and pending horizons</figcaption></figure></div></div>
       <p>Because the constant-acceleration predictor is only locally valid, the OCP is re-solved at each replanning instant from the latest state estimate. Each solve spans a fixed number of \(N\) intervals with free time steps \(\Delta t_k\), so the horizon duration \(\sum_{k=0}^{N-1}\Delta t_k\) is itself an optimization variable and shrinks as the vehicle approaches touchdown.</p>
       <p>Only a short prefix of the resulting plan is executed, and the next solve is warm-started from the shifted solution. The full horizon is retained at every cycle so that the terminal touchdown conditions and STC approach bounds remain enforced.</p>
     </section>
@@ -281,6 +297,7 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
     <!-- SOURCE: paper §2.4.2 title + trigger sentence (verbatim) -->
     <section class="beat" id="b3" data-media="3">
       <h2>Final-Approach Constraints</h2>
+      <div class="media-frame inline-media" data-key="3"><div class="mstack"><figure class="mfig"><img src="assets/fig/single_horizon_stc_paper_3d.png" alt="(a) Planned trajectory for a stationary target" loading="lazy"><figcaption>(a) Planned trajectory for a stationary target<span class="src">Paper, Fig. 2a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/single_horizon_stc_paper_states.png" alt="(b) State and input histories during the open-loop solve" loading="lazy"><figcaption>(b) State and input histories during the open-loop solve<span class="src">Paper, Fig. 2b</span></figcaption></figure></div></div>
       <p>The final approach uses a compound state-triggered constraint (STC) with trigger functions</p>
       <div class="eq">\[ g_{\mathrm{alt}} = r_z - z_{\mathrm{trig}}, \qquad
       g_{\mathrm{cap}} = r_{xy}^{2} - R_{\mathrm{cap}}^{2} \tag{11} \]</div>
@@ -321,6 +338,7 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
     <!-- SOURCE: paper §3.2 (verbatim) -->
     <section class="beat" id="b4" data-media="4">
       <h2>State-Triggered Constraints in DDP</h2>
+      <div class="media-frame inline-media" data-key="4"><div class="mstack"><figure class="mfig"><img src="assets/fig/stc_paper_3d.png" alt="(a) Trajectories in the world and target-centered frames" loading="lazy"><figcaption>(a) Trajectories in the world and target-centered frames<span class="src">Paper, Fig. 3a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/stc_paper_states.png" alt="(b) State and input histories during online replanning" loading="lazy"><figcaption>(b) State and input histories during online replanning<span class="src">Paper, Fig. 3b</span></figcaption></figure></div></div>
       <p>An STC pairs a trigger function \(g(\bm x)\) with a bound \(c(\bm x,\bm u)\le 0\) that must hold only in the region where \(g(\bm x)<0\). Adopting the D-GMSR zero-set form, with \((a)_+=\max(0,a)\), this state-conditioned bound is encoded by the scalar</p>
       <div class="eq">\[ h_{\mathrm{stc}}(\mathbf x,\mathbf u)=\bigl(-g(\mathbf x)\bigr)_+^{2}\,\bigl(c(\mathbf x,\mathbf u)\bigr)_+^{2}=0 \tag{18} \]</div>
       <p>For multiple triggers, compound STCs represent logical AND by multiplying the trigger factors and logical OR by summing them:</p>
@@ -343,6 +361,7 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
     <!-- SOURCE: paper abstract + §4.1 (verbatim) -->
     <section class="beat" id="results" data-media="5">
       <h2>Randomized Initial-Condition Benchmark</h2>
+      <div class="media-frame inline-media" data-key="5"><div class="mstack"><figure class="mfig fig4"><img src="assets/fig/cloud_cstc_openscvx_100ic.png" alt="Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange)." loading="lazy"><figcaption>Trajectories from the 100-sample benchmark: cSTC-DDP (blue) and the sequential-convex arm (orange).<span class="src">Paper, Fig. 4</span></figcaption></figure><figure class="mfig mtab"><figcaption>Benchmark over 100 randomized initial conditions<span class="src">Paper, Tab. 1</span></figcaption><div class="tw"><table><thead><tr><th>Metric</th><th>cSTC-DDP</th><th>SCP arm</th></tr></thead><tbody><tr><td>Compliant landings / 100</td><td><b>93/100</b></td><td>86/100</td></tr><tr><td>All landings / 100</td><td><b>98/100</b></td><td>86/100</td></tr><tr><td>Median &lVert;e<sub>p</sub>&rVert; [m]</td><td><b>6.76&times;10<sup>&minus;5</sup></b></td><td>9.07&times;10<sup>&minus;4</sup></td></tr><tr><td>Solve time, med / p95 [s]</td><td><b>0.95 / 1.22</b></td><td>4.05 / 9.51</td></tr></tbody></table></div></figure></div></div>
       <p>Tab. 1 compares the proposed cSTC-DDP with an OpenSCvx baseline using per-interval CT-cSTC. Both solve the same OCP from 100 fixed initial conditions (ICs), sampled with \(r_{xy}\in[0.25,4.5]\) m, \(r_z\in[1.7,3.0]\) m, and \(\lVert{}_{\mathcal T}\bm v_{\mathcal B}\rVert_2\in[0.2,2.95]\) m/s; below \(r_z=1.8\) m, \(r_{xy}\le 1.1\) m. Native grids use 80 DDP intervals and 21 SCvx nodes.</p>
       <p>A landing requires finite outputs, \(\lVert\bm e_p\rVert\le 0.10\) m, \(\lVert\bm e_v\rVert\le 0.30\) m/s, and maximum hard-path excess at most \(10^{-2}\). Error medians use compliant landings; solve times use all runs and exclude initialization and auditing. Unlike the 180 ms hardware replans, these full-horizon solves have no warm start.</p>
       <p>The results show seven more compliant cSTC-DDP landings, lower median position error, and shorter solve times.</p>
@@ -350,6 +369,7 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
     </section>
     <section class="beat" id="b6" data-media="6">
       <h2>SITL Target-Motion Evaluation</h2>
+      <div class="media-frame inline-media" data-key="6"><div class="mstack"><div class="mgrid mgrid-pane"><figure class="mgrid-item"><video src="assets/motions_world/circle.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Circular</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/figure8.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Figure-eight</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/straight.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Straight</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/stop_and_go.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Stop-and-go</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/piecewise_accel.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Piecewise acceleration</figcaption></figure><figure class="mgrid-item"><video src="assets/motions_world/random_accel.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Random acceleration</figcaption></figure></div></div></div>
       <p>Gazebo-based software-in-the-loop (SITL) simulations evaluate six planar target motions: straight, circular, figure-eight, stop-and-go, piecewise-acceleration, and random-acceleration.</p>
       <p>Across 50 trials per motion, peak target speeds are 0.40&ndash;0.50 m/s and peak accelerations are 0&ndash;0.328 m/s&sup2;; 290/300 trials land successfully (40/50 circular and 50/50 otherwise).</p>
       <p>Another 60 circular-motion trials (20 per level) apply zero, nominal, or high Gaussian target-estimate uncertainty, with a fixed per-trial bias drawn at \(0.5\sigma\). All 60 trials land successfully.</p>
@@ -365,12 +385,14 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
     <!-- SOURCE: paper §4.3 + abstract (verbatim) -->
     <section class="beat" id="b10" data-media="10">
       <h2>ROS wrapper for online planning and execution</h2>
+      <div class="media-frame inline-media" data-key="10"><div class="mstack"><figure class="mfig"><video src="assets/sitl/gazebo-v6.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Gazebo &mdash; a PX4 x500 landing on the moving platform</figcaption></figure><figure class="mfig"><video src="assets/sitl/rviz-v6.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>RViz &mdash; the planned trajectory against drone and target odometry, redrawn each solve</figcaption></figure></div></div>
       <p>The planner is exposed as a ROS 2 node with a solver core that carries no ROS types. State assembly rebases the vehicle odometry into the target-centered frame each solve; the solver returns a state, control and feedback-gain triple; and a replayer interpolates the plan against wall-clock time, handing off between the active and pending horizons.</p>
       <p>A platform adapter isolates the airframe interface, so the same planner drives either a PX4 vehicle through MAVROS or a Crazyflie through Crazyswarm 2. Target kinematics enter through a separate publisher, which allows the estimator to be replaced without touching the planner.</p>
     </section>
 
     <section class="beat" id="b7" data-media="7">
       <h2>Hardware Landing Experiments</h2>
+      <div class="media-frame inline-media" data-key="7"><div class="mstack"><figure class="mfig"><img src="assets/fig/flight_circle.png" alt="Time-lapse landing trajectory, circular target motion" loading="lazy"><figcaption>Time-lapse landing trajectory, circular target motion<span class="src">Paper, Fig. 1a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/flight_random.png" alt="Time-lapse landing trajectory, random target motion" loading="lazy"><figcaption>Time-lapse landing trajectory, random target motion<span class="src">Paper, Fig. 1b</span></figcaption></figure></div></div>
       <p>A Crazyflie 2.1 quadrotor lands on an ST-mini unmanned ground vehicle (UGV), which serves as the moving target. A Qualisys motion-capture system streams pose measurements for both vehicles over ROS 2; onboard inertial measurement unit (IMU) data supplied through Crazyswarm 2 complete the Crazyflie&rsquo;s state estimate. The DDP solver runs off-board on an AMD Ryzen 7 4800HS CPU as a ROS 2 node.</p>
       <p>At each replanning instant, it reads the current relative state, holds the latest target acceleration estimate constant, and re-solves the landing OCP using the shifted previous solution as a warm start. Replanning is event-driven at approximately 5 Hz, with median solve times of 178&ndash;188 ms across all conditions.</p>
     </section>
@@ -378,6 +400,7 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
     <!-- SOURCE: paper §4.3 (verbatim) -->
     <section class="beat" id="b8" data-media="8">
       <h2>Landing timing and peak active-phase excesses</h2>
+      <div class="media-frame inline-media" data-key="8"><div class="mstack"><figure class="mfig"><img src="assets/fig/hardware_tracking_errors_box.png" alt="Approach tracking-error distributions across the three conditions" loading="lazy"><figcaption>Approach tracking-error distributions across the three conditions<span class="src">Paper, Fig. 5</span></figcaption></figure><div class="mrow"><figure class="mfig"><img src="assets/fig/land_location.png" alt="Touchdown locations relative to the landing pad" loading="lazy"><figcaption>Touchdown locations relative to the landing pad<span class="src">Paper, Fig. 6</span></figcaption></figure><figure class="mfig"><img src="assets/fig/solver_timing.png" alt="Solve-time statistics across the three conditions" loading="lazy"><figcaption>Solve-time statistics across the three conditions<span class="src">Paper, Fig. 7</span></figcaption></figure></div></div></div>
       <p>The STC trigger fires at \(t_{\mathrm{trig}}=6.56\)&ndash;\(8.19\) s in all runs, followed by a descent phase of 0.98&ndash;1.42 s.</p>
       <p>Speed, tilt, and thrust show zero executed excess; body-rate values use Crazyswarm 2&rsquo;s deg/s-to-rad/s conversion.</p>
       <figure class="tfig ttab">
@@ -453,63 +476,41 @@ body.reading-layout .mfig figcaption{font-size:.85rem}
 
 <script>
 (function(){
-  var frames={}, beats=document.querySelectorAll('.beat[data-media]');
-  document.querySelectorAll('.media-frame').forEach(function(f){frames[f.dataset.key]=f;});
-
-  var readingQuery=matchMedia('(max-width:1100px), (prefers-reduced-motion:reduce)'),
-      mediaInner=document.querySelector('.media-inner');
-  function placeMedia(){
-    document.body.classList.toggle('reading-layout',readingQuery.matches);
-    if(readingQuery.matches) document.querySelectorAll('video').forEach(function(v){v.pause();});
-    beats.forEach(function(beat){
-      var frame=frames[beat.dataset.media];
-      if(!frame) return;
-      frame.classList.toggle('inline-media',readingQuery.matches);
-      if(readingQuery.matches) beat.querySelector('h2').insertAdjacentElement('afterend',frame);
-      else mediaInner.appendChild(frame);
-    });
-  }
-  placeMedia();
-  readingQuery.addEventListener('change',placeMedia);
-  // Only visible videos play. Phone visitors choose when to start a clip.
-  var reduceMotion=matchMedia('(prefers-reduced-motion:reduce)');
-  document.querySelectorAll('video').forEach(function(v){
-    v.autoplay=false;
-    v.controls=true;
-    v.pause();
+  var rail=document.getElementById('rail'),
+      items=Array.from(rail.querySelectorAll('.rail-item')),
+      scrolly=document.querySelector('.scrolly'),
+      reduceMotion=matchMedia('(prefers-reduced-motion:reduce)'),
+      narrow=matchMedia('(max-width:1100px)');
+  function mark(id){items.forEach(function(a){
+    var active=a.hash==='#'+id;
+    a.classList.toggle('on',active);
+    if(active) a.setAttribute('aria-current','location');
+    else a.removeAttribute('aria-current');
+  });}
+  function updateRail(){rail.classList.toggle('on',scrolly.getBoundingClientRect().top<=64);}
+  window.addEventListener('scroll',updateRail,{passive:true});
+  window.addEventListener('resize',updateRail);
+  updateRail();
+  items.forEach(function(a){a.addEventListener('click',function(){mark(a.hash.slice(1));});});
+  document.querySelectorAll('video').forEach(function(v){v.autoplay=false;v.controls=true;v.pause();});
+  reduceMotion.addEventListener('change',function(){
+    if(reduceMotion.matches) document.querySelectorAll('video').forEach(function(v){v.pause();});
   });
-  if('IntersectionObserver' in window){
-    var videoObserver=new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        var v=e.target, frame=v.closest('.media-frame');
-        if(e.isIntersecting && (!readingQuery.matches || v.hasAttribute('data-teaser')) && !reduceMotion.matches &&
-           !(navigator.connection && navigator.connection.saveData) &&
-           (!frame || frame.classList.contains('is-active'))) v.play().catch(function(){});
-        else if(!e.isIntersecting) v.pause();
-      });
-    },{threshold:.25});
-    document.querySelectorAll('video').forEach(function(v){videoObserver.observe(v);});
-  }
-
-
-  function showMedia(k){
-    for(var i in frames) frames[i].classList.toggle('is-active', i===k);
-    for(var j in frames){ frames[j].querySelectorAll('video').forEach(function(v){
-      if(readingQuery.matches) return;
-      if(j===k && !readingQuery.matches && !reduceMotion.matches &&
-         !(navigator.connection && navigator.connection.saveData)) v.play().catch(function(){});
-      else v.pause();
-    }); }
-  }
-
-  if(!('IntersectionObserver' in window)){ showMedia('1'); return; }
-
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting) showMedia(e.target.dataset.media); });
-  },{rootMargin:'-45% 0px -45% 0px',threshold:0});
-  beats.forEach(function(b){io.observe(b);});
-
-  showMedia('1');
+  if(!('IntersectionObserver' in window)) return;
+  var videoObserver=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      var v=e.target;
+      if(e.isIntersecting && (!narrow.matches || v.hasAttribute('data-teaser')) &&
+         !reduceMotion.matches && !(navigator.connection && navigator.connection.saveData))
+        v.play().catch(function(){});
+      else if(!e.isIntersecting) v.pause();
+    });
+  },{threshold:.25});
+  document.querySelectorAll('video').forEach(function(v){videoObserver.observe(v);});
+  var sectionObserver=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting) mark(e.target.id);});
+  },{rootMargin:'-20% 0px -60% 0px',threshold:0});
+  document.querySelectorAll('.beat[id],.wide[id]').forEach(function(s){sectionObserver.observe(s);});
 })();
 </script>
 </body>
