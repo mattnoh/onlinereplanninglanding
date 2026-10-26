@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>cSTC-DDP — scrollytelling prototype</title>
+<title>cSTC-DDP | ICCAS 2026</title>
+<meta name="description" content="Compound state-triggered constrained DDP for receding-horizon quadrotor landing on a moving platform. ICCAS 2026 research, simulations, and hardware experiments.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,8 +23,8 @@ window.MathJax={tex:{tags:'none',macros:{bm:['\\boldsymbol{#1}',1]},inlineMath:[
   --line:#e3e4e8;
   --serif:"Gothic A1",system-ui,sans-serif;
   --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  --rail:11rem;
-  --media-col:clamp(24rem,56vw,62rem);
+  --rail:9.5rem;
+  --media-col:clamp(24rem,44vw,46rem);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -64,7 +65,7 @@ h1{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4.4vw,4rem);lin
 .ph small{font-size:.82rem;line-height:1.5}
 
 .beats{padding:0}
-.beat{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:7rem 3.5rem}
+.beat{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:5rem clamp(1.5rem,3vw,3.5rem)}
 .beat h2{font-family:var(--serif);font-size:clamp(1.3rem,1.75vw,1.65rem);line-height:1.2;letter-spacing:-.01em;margin:0 0 1rem;text-wrap:balance}
 .beat p{margin:0 0 1rem;font-size:1.0625rem}
 .takeaway{border-left:3px solid var(--accent);padding-left:1rem;font-weight:700}
@@ -132,35 +133,106 @@ pre{background:#0f1419;color:#e6e6e6;padding:1.25rem;border-radius:8px;overflow-
 .refs li{margin-bottom:.5rem}
 footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;text-align:center}
 
-/* ---------- mobile / reduced motion ---------- */
-@media (max-width:900px){
-  .rail{display:none}
-  .scrolly{margin-left:0;grid-template-columns:1fr}
-  .hero{padding-left:1.5rem}
-  .wrap-wide{margin-left:0}
-  .media{display:none}
-  .beat{min-height:auto;padding:3rem 1.25rem}
-  .beat .inline-media{display:block;margin-bottom:1.5rem}
+/* Opening demonstrations lead into the technical story. */
+.opening{max-width:80rem;margin:0 auto;padding:3.5rem 2rem 4.5rem;scroll-margin-top:4.5rem}
+.opening-heading{max-width:46rem;margin-bottom:1.5rem}
+.opening-heading h2{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.4rem);line-height:1.25;margin:0 0 .75rem;text-wrap:balance}
+.opening-heading p{margin:0;color:var(--muted)}
+.opening-heading .eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-deep);margin:0 0 .7rem}
+.opening figure{margin:0;min-width:0}
+.opening video{display:block;width:100%;height:auto;background:#eef0f3;border-radius:8px}
+.opening figcaption{margin-top:.6rem;font-size:.85rem;color:var(--muted);line-height:1.45}
+.opening-hardware{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
+.opening-motions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
+.motion-heading{margin-top:3.5rem}
+.opening-link{display:inline-flex;align-items:center;min-height:44px;gap:.75rem;margin-top:2rem;font-weight:700;text-decoration:none}
+@media(max-width:700px){
+  .opening{padding:2.5rem 1.25rem 3rem}
+  .opening-hardware{grid-template-columns:minmax(0,1fr);gap:1.5rem}
+  .opening-motions{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem .75rem}
+  .opening-motions figcaption{font-size:.75rem}
+  .motion-heading{margin-top:2.5rem}
 }
-.inline-media{display:none}
-@media (prefers-reduced-motion:reduce){
+/* ---------- responsive reading layout ---------- */
+img,video{max-width:100%}
+.hero-inner,.beats,.beat,.media,.media-frame,.mstack,.mgrid-item{min-width:0}
+.hero h1{text-wrap:balance}
+.hero{padding-left:1.5rem;min-height:78svh}
+.badge{background:rgba(255,255,255,.85);border-color:#c9cdd5}
+body:not(.reading-layout) .media-frame[data-key="1"] .mfig{flex:none}
+body:not(.reading-layout) .media-frame[data-key="1"] img{height:auto;max-width:100%}
+.problem-context{border-top:1px solid var(--line);padding-top:1.5rem;margin-top:1rem}
+.problem-context h3{font-size:1.05rem;line-height:1.4;margin:0 0 .75rem}
+.problem-context p{font-size:.98rem}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:focus-visible,video:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.rail-item{min-height:44px;display:flex;align-items:center}
+.mobile-nav,.inline-media{display:none}
+.beat,.wide,.refs li{scroll-margin-top:4.5rem}
+/* Figures retain their natural dimensions when read in the document flow. */
+body.reading-layout .rail,body.reading-layout .media{display:none}
+body.reading-layout .scrolly{margin-left:0;display:block}
+body.reading-layout .wrap-wide{margin-left:0}
+body.reading-layout .beats{max-width:52rem;margin:auto}
+body.reading-layout .beat{min-height:0;padding:3rem 1.25rem;display:block;border-bottom:1px solid var(--line)}
+body.reading-layout .beat h2{font-size:clamp(1.5rem,4vw,2rem);line-height:1.3}
+body.reading-layout .inline-media{display:block;margin:1.5rem 0 2rem;position:static;padding:0;opacity:1;transform:none;pointer-events:auto}
+body.reading-layout .mstack{height:auto;gap:1.5rem;display:flex}
+body.reading-layout .mstack .mfig,body.reading-layout .mrow .mfig{flex:initial;height:auto;overflow:visible}
+body.reading-layout .mfig img,body.reading-layout .mfig video{display:block;width:100%;height:auto;max-width:100%;margin:0;object-fit:contain}
+body.reading-layout .mrow{grid-template-columns:1fr;height:auto;gap:1.5rem;flex:none}
+body.reading-layout .mgrid.mgrid-pane{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;flex:initial;gap:1.25rem}
+body.reading-layout .mgrid.mgrid-pane video{height:auto}
+body.reading-layout .fig4{padding-top:0}
+body.reading-layout .ph{min-height:10rem;height:auto}
+body.reading-layout .mfig figcaption{font-size:.85rem}
+body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;gap:.25rem;padding:.5rem max(.75rem,env(safe-area-inset-left));overflow-x:auto;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line)}
+.mobile-nav a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:.45rem .5rem;flex:1;white-space:nowrap;color:var(--ink);font-size:.8rem;font-weight:700;text-decoration:none;border-radius:6px}
+.mobile-nav a:hover,.mobile-nav a:focus-visible{background:var(--accent-soft);color:var(--accent-deep)}
+@media(max-width:1100px){
+  .hero{min-height:0;padding:4rem 1.25rem 3rem}
+  h1{font-size:clamp(1.85rem,5vw,3rem);line-height:1.18}
+  .hero-media img{opacity:.12}
+  .hero .authors{font-size:.95rem;line-height:1.8}
+  .hero .venue{font-size:.9rem}
+  .badge{min-height:44px;display:inline-flex;align-items:center}
+  .wide,.wrap-wide > .wide:first-child{padding:3rem 1.25rem}
+  .wide h2{font-size:1.6rem}
+  #video{padding:3rem 1.25rem}
+  #video .mgrid{grid-template-columns:1fr}
+  .mgrid{grid-template-columns:minmax(0,1fr)}
+  .beat p{font-size:1rem;line-height:1.75}
+  .eq{padding-left:.65rem;max-width:100%}
+  .src{white-space:normal;margin-left:.35rem}
+  .tw{max-width:100%;-webkit-overflow-scrolling:touch}
+  .ttab table,.mtab table{font-size:.8rem;min-width:22rem}
+  .ttab th,.ttab td,.mtab th,.mtab td{padding:.5rem .4rem}
+  pre{font-size:.75rem;border-radius:6px}
+}
+@media(max-width:600px){
+  body.reading-layout .mgrid.mgrid-pane{grid-template-columns:minmax(0,1fr)}
+  .badges{gap:.5rem;margin-top:1.5rem}
+  .badge{padding:.45rem .9rem}
+}
+@media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .media{position:static;height:auto}
-  .media-frame{position:static;opacity:1}
+  *,*::before,*::after{transition:none!important;animation:none!important}
 }
 </style>
 </head>
 <body>
+<script>document.body.classList.toggle('reading-layout',matchMedia('(max-width:1100px), (prefers-reduced-motion:reduce)').matches);</script>
 
 <header class="hero">
-  <div class="hero-media"><img src="assets/fig/flight_circle.png" alt="Time-lapse landing trajectory, circular target motion"><p class="ph-note">placeholder still &mdash; replace with 6&ndash;10 s loop cut from DJI_0018.MP4 (4K/120 fps)</p></div>
+  <div class="hero-media"><img src="assets/fig/flight_circle.png" alt="Time-lapse landing trajectory, circular target motion"></div>
   <div class="hero-inner">
-    <h1>Compound State-Triggered Constrained DDP<br>for Receding-Horizon Quadrotor Landing on a Moving Platform</h1>
+    <h1>Compound State-Triggered Constrained DDP for Receding-Horizon Quadrotor Landing on a Moving Platform</h1>
     <p class="venue">ICCAS 2026</p>
     <p class="authors">SungJin Noh · Yong-Hee Kim · Yeohosua Kim · Kwang-Ki K. Kim</p>
     <p class="venue">Department of Electrical and Computer Engineering, Inha University</p>
     <nav class="badges">
       <a class="badge" href="#">Paper</a>
+      <a class="badge" href="#highlights">Watch</a>
       <a class="badge" href="#b1">Problem</a>
       <a class="badge" href="#b4">Method</a>
       <a class="badge" href="#results">Results</a>
@@ -170,10 +242,37 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
   </div>
 </header>
 
+<nav class="mobile-nav" aria-label="Project sections">
+  <a href="#b1">Problem</a>
+  <a href="#b4">Method</a>
+  <a href="#results">Results</a>
+  <a href="#highlights">Video</a>
+  <a href="#references">Refs</a>
+</nav>
+
+<section class="opening" id="highlights" aria-labelledby="highlights-title">
+  <div class="opening-heading"><p class="eyebrow">Hardware flights</p><h2 id="highlights-title">Landing on a moving platform</h2>
+  <p>Watch the quadrotor approach and land on the moving target. Accumulating motion trails show the flight; the red ring marks state-trigger activation.</p></div>
+  <div class="opening-hardware">
+    <figure><video src="assets/hardware/circle_timelapse.mp4" poster="assets/hardware/circle_poster.webp" data-teaser muted loop playsinline controls preload="metadata" aria-label="Hardware landing on a circular moving target"></video><figcaption>Circular target motion · hardware</figcaption></figure>
+    <figure><video src="assets/hardware/random_timelapse.mp4" poster="assets/hardware/random_poster.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Hardware landing on a randomly moving target"></video><figcaption>Random target motion · hardware</figcaption></figure>
+  </div>
+  <div class="opening-heading motion-heading"><p class="eyebrow">Software-in-the-loop</p><h2>Six target motions</h2>
+  <p>The same planner follows six different target-motion profiles.</p></div>
+  <div class="opening-motions">
+      <figure><video src="assets/motions_world/circle.mp4" poster="teaser-posters/circle.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Circular target motion in simulation"></video><figcaption>Circular</figcaption></figure>
+      <figure><video src="assets/motions_world/figure8.mp4" poster="teaser-posters/figure8.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Figure-eight target motion in simulation"></video><figcaption>Figure-eight</figcaption></figure>
+      <figure><video src="assets/motions_world/straight.mp4" poster="teaser-posters/straight.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Straight target motion in simulation"></video><figcaption>Straight</figcaption></figure>
+      <figure><video src="assets/motions_world/stop_and_go.mp4" poster="teaser-posters/stop_and_go.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Stop-and-go target motion in simulation"></video><figcaption>Stop-and-go</figcaption></figure>
+      <figure><video src="assets/motions_world/piecewise_accel.mp4" poster="teaser-posters/piecewise_accel.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Piecewise acceleration target motion in simulation"></video><figcaption>Piecewise acceleration</figcaption></figure>
+      <figure><video src="assets/motions_world/random_accel.mp4" poster="teaser-posters/random_accel.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Random acceleration target motion in simulation"></video><figcaption>Random acceleration</figcaption></figure>
+  </div>
+  <a class="opening-link" href="#b1">Explore the problem and method <span aria-hidden="true">↓</span></a>
+</section>
+
 <nav class="rail" id="rail" aria-label="Section progress">
   <div class="rail-group">Motivation</div>
   <a class="rail-item" data-for="1">Problem</a>
-  <a class="rail-item" data-for="9">Related work</a>
   <a class="rail-item" data-for="11">Horizon loop</a>
   <div class="rail-group">STC Method</div>
   <a class="rail-item" data-for="3">Final approach</a>
@@ -208,7 +307,7 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
       <div class="media-frame" data-key="12"><div class="mstack"><div class="ph"><span><b>Figma slide 7 &mdash; terminal equality to interval density</b><small>augmented state/control and the ALM/IPM split; SVG export needed</small></span></div></div></div>
       <div class="media-frame" data-key="7"><div class="mstack"><figure class="mfig"><img src="assets/fig/flight_circle.png" alt="Time-lapse landing trajectory, circular target motion" loading="lazy"><figcaption>Time-lapse landing trajectory, circular target motion<span class="src">Paper, Fig. 1a</span></figcaption></figure><figure class="mfig"><img src="assets/fig/flight_random.png" alt="Time-lapse landing trajectory, random target motion" loading="lazy"><figcaption>Time-lapse landing trajectory, random target motion<span class="src">Paper, Fig. 1b</span></figcaption></figure></div></div>
       <div class="media-frame" data-key="8"><div class="mstack"><figure class="mfig"><img src="assets/fig/hardware_tracking_errors_box.png" alt="Approach tracking-error distributions across the three conditions" loading="lazy"><figcaption>Approach tracking-error distributions across the three conditions<span class="src">Paper, Fig. 5</span></figcaption></figure><div class="mrow"><figure class="mfig"><img src="assets/fig/land_location.png" alt="Touchdown locations relative to the landing pad" loading="lazy"><figcaption>Touchdown locations relative to the landing pad<span class="src">Paper, Fig. 6</span></figcaption></figure><figure class="mfig"><img src="assets/fig/solver_timing.png" alt="Solve-time statistics across the three conditions" loading="lazy"><figcaption>Solve-time statistics across the three conditions<span class="src">Paper, Fig. 7</span></figcaption></figure></div></div></div>
-      <div class="media-frame" data-key="9"><div class="mstack"><div class="ph"><span><b>Figma slide 3 &mdash; related-work landscape</b><small>positioning map (fixed sequence &rarr; mode logic &rarr; temporal logic vs. costs &rarr; hard@nodes &rarr; hard cont-time), plus the 2018&ndash;2026 timeline</small></span></div></div></div>
+
       <div class="media-frame" data-key="10"><div class="mstack"><figure class="mfig"><video src="assets/sitl/gazebo-v6.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>Gazebo &mdash; a PX4 x500 landing on the moving platform</figcaption></figure><figure class="mfig"><video src="assets/sitl/rviz-v6.mp4" muted loop autoplay playsinline preload="metadata"></video><figcaption>RViz &mdash; the planned trajectory against drone and target odometry, redrawn each solve</figcaption></figure></div></div>
     </div>
   </div>
@@ -224,13 +323,13 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
       <p><b>ride the boundary:</b> if the optimum leaves no margin, so an ordinary tracking error puts the next initial condition outside the cone.</p>
       <p><b>widen the cone:</b> opening it far enough to admit a realistic start leaves it too loose to shape the approach at all.</p>
       <p class="takeaway">All three enforce the glideslope everywhere and run into different kinds of problems ... So why not impose the cone only where it actually means something?</p>
+      <div class="problem-context" aria-labelledby="related-work-heading">
+        <h3 id="related-work-heading">Where this fits in related work</h3>
+        <p>Approaches to state-dependent logic in trajectory optimization differ in how they enforce a condition. Mixed-integer and hybrid formulations introduce binary decisions or a prescribed mode sequence; smooth-robustness methods relax the logic into the cost; state-triggered constraints keep the condition hard while remaining continuous.</p>
+        <p>Compound state-triggered constraints and their continuous-time extension were developed within sequential convex programming <a href="#ref-cstc">[8]</a>, <a href="#ref-ctcstc">[10]</a>. This work carries that construction into differential dynamic programming, applying the final-approach bounds only when the vehicle enters the capture region.</p>
+      </div>
     </section>
 
-    <section class="beat" data-media="9">
-      <h2>Signal Temporal Logic in Optimal Control</h2>
-      <p>Approaches to state-dependent logic in trajectory optimization divide by where the condition is enforced and by what is required of the solver. Mixed-integer and hybrid formulations introduce binaries or a prescribed mode sequence; smooth-robustness methods relax the logic into the cost; state-triggered constraints keep the condition hard while remaining continuous.</p>
-      <p>Compound state-triggered constraints and their continuous-time extension were developed within sequential convex programming. The formulation presented here carries that construction into differential dynamic programming.</p>
-    </section>
     <section class="beat" data-media="11">
       <h2>Receding-Horizon Loop</h2>
       <p>Because the constant-acceleration predictor is only locally valid, the OCP is re-solved at each replanning instant from the latest state estimate. Each solve spans a fixed number of \(N\) intervals with free time steps \(\Delta t_k\), so the horizon duration \(\sum_{k=0}^{N-1}\Delta t_k\) is itself an optimization variable and shrinks as the vehicle approaches touchdown.</p>
@@ -303,7 +402,7 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
     </section>
 
     <!-- SOURCE: paper abstract + §4.1 (verbatim) -->
-    <section class="beat" data-media="5">
+    <section class="beat" id="results" data-media="5">
       <h2>Randomized Initial-Condition Benchmark</h2>
       <p>Tab. 1 compares the proposed cSTC-DDP with an OpenSCvx baseline using per-interval CT-cSTC. Both solve the same OCP from 100 fixed initial conditions (ICs), sampled with \(r_{xy}\in[0.25,4.5]\) m, \(r_z\in[1.7,3.0]\) m, and \(\lVert{}_{\mathcal T}\bm v_{\mathcal B}\rVert_2\in[0.2,2.95]\) m/s; below \(r_z=1.8\) m, \(r_{xy}\le 1.1\) m. Native grids use 80 DDP intervals and 21 SCvx nodes.</p>
       <p>A landing requires finite outputs, \(\lVert\bm e_p\rVert\le 0.10\) m, \(\lVert\bm e_v\rVert\le 0.30\) m/s, and maximum hard-path excess at most \(10^{-2}\). Error medians use compliant landings; solve times use all runs and exclude initialization and auditing. Unlike the 180 ms hardware replans, these full-horizon solves have no warm start.</p>
@@ -398,9 +497,9 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
     <li>D. Falanga, A. Zanchettin, A. Simovic, J. Delmerico, and D. Scaramuzza, &ldquo;Vision-based autonomous quadrotor landing on a moving platform,&rdquo; in <i>Proc. IEEE SSRR</i>, 2017, pp. 200&ndash;207.</li>
     <li>K. Xia, S.-M. Lee, W. Chung, Y. Zou, and H. Son, &ldquo;Moving target landing of a quadrotor using robust optimal guaranteed cost control,&rdquo; <i>IEEE/CAA J. Autom. Sinica</i>, vol. 10, no. 3, pp. 819&ndash;821, Mar. 2023.</li>
     <li>P. Serra, R. Cunha, T. Hamel, D. Cabecinhas, and C. Silvestre, &ldquo;Landing of a quadrotor on a moving target using dynamic image-based visual servo control,&rdquo; <i>IEEE Trans. Robot.</i>, vol. 32, no. 6, pp. 1524&ndash;1535, Dec. 2016.</li>
-    <li>M. Szmuk, T. P. Reynolds, B. A&ccedil;&#305;kme&#351;e, M. Mesbahi, and J. M. Carson, &ldquo;Successive convexification for 6-DoF powered descent guidance with compound state-triggered constraints,&rdquo; in <i>Proc. AIAA SciTech Forum</i>, 2019, Art. no. AIAA 2019-0926.</li>
+    <li id="ref-cstc">M. Szmuk, T. P. Reynolds, B. A&ccedil;&#305;kme&#351;e, M. Mesbahi, and J. M. Carson, &ldquo;Successive convexification for 6-DoF powered descent guidance with compound state-triggered constraints,&rdquo; in <i>Proc. AIAA SciTech Forum</i>, 2019, Art. no. AIAA 2019-0926.</li>
     <li>S. Uzun, P. Elango, P.-L. Garoche, and B. A&ccedil;&#305;kme&#351;e, &ldquo;Optimization with temporal and logical specifications via generalized mean-based smooth robustness measures,&rdquo; arXiv:2405.10996, 2024.</li>
-    <li>S. Uzun, B. A&ccedil;&#305;kme&#351;e, and J. M. Carson, &ldquo;Sequential convex programming for 6-DoF powered descent guidance with continuous-time compound state-triggered constraints,&rdquo; in <i>Proc. AIAA SciTech Forum</i>, 2025, Art. no. AIAA 2025-1895.</li>
+    <li id="ref-ctcstc">S. Uzun, B. A&ccedil;&#305;kme&#351;e, and J. M. Carson, &ldquo;Sequential convex programming for 6-DoF powered descent guidance with continuous-time compound state-triggered constraints,&rdquo; in <i>Proc. AIAA SciTech Forum</i>, 2025, Art. no. AIAA 2025-1895.</li>
     <li>T. A. Howell, K. Tracy, S. Le Cleac&rsquo;h, and Z. Manchester, &ldquo;CALIPSO: A differentiable solver for trajectory optimization with conic and complementarity constraints,&rdquo; in <i>Robotics Research</i>, ser. SPAR, vol. 27, 2023, pp. 504&ndash;521.</li>
     <li>T. A. Howell, B. E. Jackson, and Z. Manchester, &ldquo;ALTRO: A fast solver for constrained trajectory optimization,&rdquo; in <i>Proc. IEEE/RSJ IROS</i>, 2019, pp. 7674&ndash;7679.</li>
     <li>A. Pavlov, I. Shames, and C. Manzie, &ldquo;Interior point differential dynamic programming,&rdquo; <i>IEEE Trans. Control Syst. Technol.</i>, vol. 29, no. 6, pp. 2720&ndash;2727, Nov. 2021.</li>
@@ -411,30 +510,69 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
 
 </div>
 
-<footer>Prototype — placeholder media. Inha University · CORA</footer>
+<footer>ICCAS 2026 · Inha University · CORA</footer>
 
 <script>
 (function(){
   var frames={}, beats=document.querySelectorAll('.beat[data-media]'),
       rail=document.getElementById('rail'),
-      items=[].slice.call(document.querySelectorAll('.rail-item')),
-      hero=document.querySelector('.hero');
+      items=[].slice.call(document.querySelectorAll('.rail-item'));
   document.querySelectorAll('.media-frame').forEach(function(f){frames[f.dataset.key]=f;});
 
-  items.forEach(function(it){
-    it.addEventListener('click',function(){
-      var t = it.dataset.sec ? document.getElementById(it.dataset.sec)
-                             : document.querySelector('.beat[data-media="'+it.dataset.for+'"]');
-      if(t) t.scrollIntoView({behavior:'smooth', block: it.dataset.sec ? 'start' : 'center'});
+  var readingQuery=matchMedia('(max-width:1100px), (prefers-reduced-motion:reduce)'),
+      mediaInner=document.querySelector('.media-inner');
+  function placeMedia(){
+    document.body.classList.toggle('reading-layout',readingQuery.matches);
+    if(readingQuery.matches) document.querySelectorAll('video').forEach(function(v){v.pause();});
+    beats.forEach(function(beat){
+      var frame=frames[beat.dataset.media];
+      if(!frame) return;
+      frame.classList.toggle('inline-media',readingQuery.matches);
+      if(readingQuery.matches) beat.querySelector('h2').insertAdjacentElement('afterend',frame);
+      else mediaInner.appendChild(frame);
     });
+  }
+  placeMedia();
+  readingQuery.addEventListener('change',placeMedia);
+  items.forEach(function(it){
+    var target=it.dataset.sec ? document.getElementById(it.dataset.sec)
+                             : document.querySelector('.beat[data-media="'+it.dataset.for+'"]');
+    if(target){
+      if(!target.id) target.id='b'+it.dataset.for;
+      it.href='#'+target.id;
+    }
   });
+
+  // Only visible videos play. Phone visitors choose when to start a clip.
+  var reduceMotion=matchMedia('(prefers-reduced-motion:reduce)');
+  document.querySelectorAll('video').forEach(function(v){
+    v.autoplay=false;
+    v.controls=true;
+    v.pause();
+  });
+  if('IntersectionObserver' in window){
+    var videoObserver=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        var v=e.target, frame=v.closest('.media-frame');
+        if(e.isIntersecting && (!readingQuery.matches || v.hasAttribute('data-teaser')) && !reduceMotion.matches &&
+           !(navigator.connection && navigator.connection.saveData) &&
+           (!frame || frame.classList.contains('is-active'))) v.play().catch(function(){});
+        else if(!e.isIntersecting) v.pause();
+      });
+    },{threshold:.25});
+    document.querySelectorAll('video').forEach(function(v){videoObserver.observe(v);});
+  }
 
   function mark(pred){ items.forEach(function(it){ it.classList.toggle('on', pred(it)); }); }
 
   function showMedia(k){
     for(var i in frames) frames[i].classList.toggle('is-active', i===k);
-    for(var j in frames){ var v=frames[j].querySelector('video'); if(!v) continue;
-      if(j===k){ v.play().catch(function(){}); } else { v.pause(); } }
+    for(var j in frames){ frames[j].querySelectorAll('video').forEach(function(v){
+      if(readingQuery.matches) return;
+      if(j===k && !readingQuery.matches && !reduceMotion.matches &&
+         !(navigator.connection && navigator.connection.saveData)) v.play().catch(function(){});
+      else v.pause();
+    }); }
     mark(function(it){ return it.dataset.for===k; });
   }
 
@@ -454,11 +592,12 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
   },{rootMargin:'-40% 0px -55% 0px',threshold:0});
   document.querySelectorAll('.wide[id]').forEach(function(w){io2.observe(w);});
 
-  // rail slides in once the hero has scrolled away, and stays for the rest
-  var io3=new IntersectionObserver(function(es){
-    es.forEach(function(e){ rail.classList.toggle('on', !e.isIntersecting); });
-  },{threshold:0});
-  if(hero) io3.observe(hero); else rail.classList.add('on');
+  // The opening stays full width; reveal the rail when the technical story starts.
+  var scrolly=document.querySelector('.scrolly');
+  function updateRail(){rail.classList.toggle('on',scrolly.getBoundingClientRect().top<=0);}
+  window.addEventListener('scroll',updateRail,{passive:true});
+  window.addEventListener('resize',updateRail);
+  updateRail();
 
   showMedia('1');
 })();
