@@ -23,7 +23,6 @@ window.MathJax={tex:{tags:'none',macros:{bm:['\\boldsymbol{#1}',1]},inlineMath:[
   --line:#e3e4e8;
   --serif:"Gothic A1",system-ui,sans-serif;
   --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  --rail:9.5rem;
   --media-col:clamp(24rem,44vw,46rem);
 }
 *{box-sizing:border-box}
@@ -37,18 +36,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line
 h1{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4.4vw,4rem);line-height:1.15;margin:0 0 1rem}
 .venue{color:var(--muted);font-size:1rem;margin:.25rem 0}
 .authors{font-weight:700;margin:1.5rem 0 .25rem}
-.badges{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:2rem}
-.badge{font-size:.9rem;font-weight:700;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:.45rem 1.1rem}
-.badge:hover{border-color:var(--accent);color:var(--accent)}
 
 /* ---------- scrollytelling ---------- */
-.scrolly{display:grid;grid-template-columns:var(--media-col) minmax(0,1fr);gap:0;margin-left:var(--rail)}
-.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:var(--panel);color:#fff;z-index:20;padding:1.5rem 0;overflow-y:auto;opacity:0;transform:translateX(-100%);pointer-events:none;transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1);will-change:opacity,transform}
-.rail.on{opacity:1;transform:none;pointer-events:auto}
-.rail-group{font-size:.8rem;font-weight:700;text-align:center;padding:1.1rem 0 .5rem;border-bottom:1px solid rgba(255,255,255,.3);margin:0 0 .4rem}
-.rail-item{display:block;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.72);padding:.5rem .9rem;text-decoration:none;cursor:pointer;border-left:3px solid transparent}
-.rail-item:hover{color:#fff}
-.rail-item.on{color:#fff;background:var(--accent-deep);border-left-color:var(--accent)}
+.scrolly{display:grid;grid-template-columns:var(--media-col) minmax(0,1fr);gap:0;margin-left:0}
 .media{position:sticky;top:0;height:100vh;background:var(--bg);border-right:1px solid var(--line)}
 .media-inner{position:absolute;inset:0}
 .mstack{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:1.6rem}
@@ -105,9 +95,8 @@ mjx-container{font-size:.88em}
 .mtab{gap:.5rem}
 .mtab table{font-size:.95rem}
 .mtab th,.mtab td{padding:.5rem .6rem;white-space:normal}
-.wrap-wide{margin-left:var(--rail);background:var(--bg);position:relative}
+.wrap-wide{margin-left:0;background:var(--bg);position:relative}
 .wrap-wide > .wide:first-child{padding-top:7rem}
-.hero{padding-left:calc(var(--rail) + 1.5rem)}
 .wide + .wide{border-top:1px solid var(--line)}
 .wide h2{font-family:var(--serif);font-size:1.9rem;margin:0 0 1.5rem}
 .wide h3{font-size:1.05rem;margin:2.5rem 0 .5rem}
@@ -134,7 +123,7 @@ pre{background:#0f1419;color:#e6e6e6;padding:1.25rem;border-radius:8px;overflow-
 footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;text-align:center}
 
 /* Opening demonstrations lead into the technical story. */
-.opening{max-width:80rem;margin:0 auto;padding:3.5rem 2rem 4.5rem;scroll-margin-top:4.5rem}
+.opening{max-width:80rem;margin:0 auto;padding:3.5rem 2rem 4.5rem;scroll-margin-top:2rem}
 .opening-heading{max-width:46rem;margin-bottom:1.5rem}
 .opening-heading h2{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.4rem);line-height:1.25;margin:0 0 .75rem;text-wrap:balance}
 .opening-heading p{margin:0;color:var(--muted)}
@@ -145,7 +134,6 @@ footer{padding:4rem 2rem;border-top:1px solid var(--line);color:var(--muted);fon
 .opening-hardware{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
 .opening-motions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
 .motion-heading{margin-top:3.5rem}
-.opening-link{display:inline-flex;align-items:center;min-height:44px;gap:.75rem;margin-top:2rem;font-weight:700;text-decoration:none}
 @media(max-width:700px){
   .opening{padding:2.5rem 1.25rem 3rem}
   .opening-hardware{grid-template-columns:minmax(0,1fr);gap:1.5rem}
@@ -158,7 +146,6 @@ img,video{max-width:100%}
 .hero-inner,.beats,.beat,.media,.media-frame,.mstack,.mgrid-item{min-width:0}
 .hero h1{text-wrap:balance}
 .hero{padding-left:1.5rem;min-height:78svh}
-.badge{background:rgba(255,255,255,.85);border-color:#c9cdd5}
 body:not(.reading-layout) .media-frame[data-key="1"] .mfig{flex:none}
 body:not(.reading-layout) .media-frame[data-key="1"] img{height:auto;max-width:100%}
 .problem-context{border-top:1px solid var(--line);padding-top:1.5rem;margin-top:1rem}
@@ -166,11 +153,10 @@ body:not(.reading-layout) .media-frame[data-key="1"] img{height:auto;max-width:1
 .problem-context p{font-size:.98rem}
 a{color:var(--accent-deep);text-underline-offset:.18em}
 a:focus-visible,video:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
-.rail-item{min-height:44px;display:flex;align-items:center}
-.mobile-nav,.inline-media{display:none}
-.beat,.wide,.refs li{scroll-margin-top:4.5rem}
+.inline-media{display:none}
+.beat,.wide,.refs li{scroll-margin-top:2rem}
 /* Figures retain their natural dimensions when read in the document flow. */
-body.reading-layout .rail,body.reading-layout .media{display:none}
+body.reading-layout .media{display:none}
 body.reading-layout .scrolly{margin-left:0;display:block}
 body.reading-layout .wrap-wide{margin-left:0}
 body.reading-layout .beats{max-width:52rem;margin:auto}
@@ -186,16 +172,12 @@ body.reading-layout .mgrid.mgrid-pane video{height:auto}
 body.reading-layout .fig4{padding-top:0}
 body.reading-layout .ph{min-height:10rem;height:auto}
 body.reading-layout .mfig figcaption{font-size:.85rem}
-body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;gap:.25rem;padding:.5rem max(.75rem,env(safe-area-inset-left));overflow-x:auto;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line)}
-.mobile-nav a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:.45rem .5rem;flex:1;white-space:nowrap;color:var(--ink);font-size:.8rem;font-weight:700;text-decoration:none;border-radius:6px}
-.mobile-nav a:hover,.mobile-nav a:focus-visible{background:var(--accent-soft);color:var(--accent-deep)}
 @media(max-width:1100px){
   .hero{min-height:0;padding:4rem 1.25rem 3rem}
   h1{font-size:clamp(1.85rem,5vw,3rem);line-height:1.18}
   .hero-media img{opacity:.12}
   .hero .authors{font-size:.95rem;line-height:1.8}
   .hero .venue{font-size:.9rem}
-  .badge{min-height:44px;display:inline-flex;align-items:center}
   .wide,.wrap-wide > .wide:first-child{padding:3rem 1.25rem}
   .wide h2{font-size:1.6rem}
   #video{padding:3rem 1.25rem}
@@ -211,8 +193,6 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
 }
 @media(max-width:600px){
   body.reading-layout .mgrid.mgrid-pane{grid-template-columns:minmax(0,1fr)}
-  .badges{gap:.5rem;margin-top:1.5rem}
-  .badge{padding:.45rem .9rem}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -230,25 +210,8 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
     <p class="venue">ICCAS 2026</p>
     <p class="authors">SungJin Noh · Yong-Hee Kim · Yeohosua Kim · Kwang-Ki K. Kim</p>
     <p class="venue">Department of Electrical and Computer Engineering, Inha University</p>
-    <nav class="badges">
-      <a class="badge" href="#">Paper</a>
-      <a class="badge" href="#highlights">Watch</a>
-      <a class="badge" href="#b1">Problem</a>
-      <a class="badge" href="#b4">Method</a>
-      <a class="badge" href="#results">Results</a>
-      <a class="badge" href="#code">Code</a>
-      <a class="badge" href="#bibtex">BibTeX</a>
-    </nav>
   </div>
 </header>
-
-<nav class="mobile-nav" aria-label="Project sections">
-  <a href="#b1">Problem</a>
-  <a href="#b4">Method</a>
-  <a href="#results">Results</a>
-  <a href="#highlights">Video</a>
-  <a href="#references">Refs</a>
-</nav>
 
 <section class="opening" id="highlights" aria-labelledby="highlights-title">
   <div class="opening-heading"><p class="eyebrow">Hardware flights</p><h2 id="highlights-title">Landing on a moving platform</h2>
@@ -267,31 +230,7 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
       <figure><video src="assets/motions_world/piecewise_accel.mp4" poster="teaser-posters/piecewise_accel.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Piecewise acceleration target motion in simulation"></video><figcaption>Piecewise acceleration</figcaption></figure>
       <figure><video src="assets/motions_world/random_accel.mp4" poster="teaser-posters/random_accel.webp" data-teaser muted loop playsinline controls preload="none" aria-label="Random acceleration target motion in simulation"></video><figcaption>Random acceleration</figcaption></figure>
   </div>
-  <a class="opening-link" href="#b1">Explore the problem and method <span aria-hidden="true">↓</span></a>
 </section>
-
-<nav class="rail" id="rail" aria-label="Section progress">
-  <div class="rail-group">Motivation</div>
-  <a class="rail-item" data-for="1">Problem</a>
-  <a class="rail-item" data-for="11">Horizon loop</a>
-  <div class="rail-group">STC Method</div>
-  <a class="rail-item" data-for="3">Final approach</a>
-  <a class="rail-item" data-for="12">DDP</a>
-  <a class="rail-item" data-for="4">STC in DDP</a>
-  <div class="rail-group">Evaluation</div>
-  <a class="rail-item" data-for="5">Benchmark</a>
-  <a class="rail-item" data-for="6">SITL</a>
-  <div class="rail-group">Online Execution</div>
-  <a class="rail-item" data-for="10">ROS wrapper</a>
-  <a class="rail-item" data-for="7">Hardware</a>
-  <a class="rail-item" data-for="8">Landing timing</a>
-  <div class="rail-group">Paper</div>
-
-  <a class="rail-item" data-sec="video">Video</a>
-  <a class="rail-item" data-sec="code">Code</a>
-  <a class="rail-item" data-sec="bibtex">BibTeX</a>
-  <a class="rail-item" data-sec="references">References</a>
-</nav>
 
 <div class="scrolly">
   <!-- PINNED MEDIA -->
@@ -326,11 +265,11 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
       <div class="problem-context" aria-labelledby="related-work-heading">
         <h3 id="related-work-heading">Where this fits in related work</h3>
         <p>Approaches to state-dependent logic in trajectory optimization differ in how they enforce a condition. Mixed-integer and hybrid formulations introduce binary decisions or a prescribed mode sequence; smooth-robustness methods relax the logic into the cost; state-triggered constraints keep the condition hard while remaining continuous.</p>
-        <p>Compound state-triggered constraints and their continuous-time extension were developed within sequential convex programming <a href="#ref-cstc">[8]</a>, <a href="#ref-ctcstc">[10]</a>. This work carries that construction into differential dynamic programming, applying the final-approach bounds only when the vehicle enters the capture region.</p>
+        <p>Compound state-triggered constraints and their continuous-time extension were developed within sequential convex programming [8], [10]. This work carries that construction into differential dynamic programming, applying the final-approach bounds only when the vehicle enters the capture region.</p>
       </div>
     </section>
 
-    <section class="beat" data-media="11">
+    <section class="beat" id="b11" data-media="11">
       <h2>Receding-Horizon Loop</h2>
       <p>Because the constant-acceleration predictor is only locally valid, the OCP is re-solved at each replanning instant from the latest state estimate. Each solve spans a fixed number of \(N\) intervals with free time steps \(\Delta t_k\), so the horizon duration \(\sum_{k=0}^{N-1}\Delta t_k\) is itself an optimization variable and shrinks as the vehicle approaches touchdown.</p>
       <p>Only a short prefix of the resulting plan is executed, and the next solve is warm-started from the shifted solution. The full horizon is retained at every cycle so that the terminal touchdown conditions and STC approach bounds remain enforced.</p>
@@ -340,7 +279,7 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
     <!-- SOURCE: paper abstract + §4.1 ablation sentence (verbatim) -->
 
     <!-- SOURCE: paper §2.4.2 title + trigger sentence (verbatim) -->
-    <section class="beat" data-media="3">
+    <section class="beat" id="b3" data-media="3">
       <h2>Final-Approach Constraints</h2>
       <p>The final approach uses a compound state-triggered constraint (STC) with trigger functions</p>
       <div class="eq">\[ g_{\mathrm{alt}} = r_z - z_{\mathrm{trig}}, \qquad
@@ -364,7 +303,7 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
 \end{aligned} \tag{13} \]</div>
       <p>Let \(\bm d_k\le\bm 0\) collect the path bounds and the time-step bounds. Let \(\bm g_{\mathrm{trig},k}\) collect the two trigger functions, and let \(\bm c_{\mathrm{con},k}\) collect the six consequence functions; vector inequalities are componentwise. For \(k=0,\ldots,N-1\), the complete landing OCP is</p>
     </section>
-    <section class="beat" data-media="12">
+    <section class="beat" id="b12" data-media="12">
       <h2>Differential Dynamic Programming</h2>
       <p>The physical state is extended with absolute time \(t_k\) and the scalar STC accumulator \(y_k\) to form</p>
       <div class="eq">\[ \tilde{\bm x}_k=\bigl[\,\bm x_k^\top\ \ t_k\ \ y_k\,\bigr]^\top\in\mathbb R^{15} \tag{14} \]</div>
@@ -409,7 +348,7 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
       <p>The results show seven more compliant cSTC-DDP landings, lower median position error, and shorter solve times.</p>
       <p>With the same solver, always enforcing the final limits makes all 100 ICs infeasible at \(\bm x_0\) (85 speed, 88 glideslope; union 100); removing them also lands 100/100, but every trajectory exceeds at least one final-approach safety limit and is therefore unsuitable for hardware execution.</p>
     </section>
-    <section class="beat" data-media="6">
+    <section class="beat" id="b6" data-media="6">
       <h2>SITL Target-Motion Evaluation</h2>
       <p>Gazebo-based software-in-the-loop (SITL) simulations evaluate six planar target motions: straight, circular, figure-eight, stop-and-go, piecewise-acceleration, and random-acceleration.</p>
       <p>Across 50 trials per motion, peak target speeds are 0.40&ndash;0.50 m/s and peak accelerations are 0&ndash;0.328 m/s&sup2;; 290/300 trials land successfully (40/50 circular and 50/50 otherwise).</p>
@@ -424,20 +363,20 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
     <!-- SOURCE: paper §4.2 (verbatim) -->
 
     <!-- SOURCE: paper §4.3 + abstract (verbatim) -->
-    <section class="beat" data-media="10">
+    <section class="beat" id="b10" data-media="10">
       <h2>ROS wrapper for online planning and execution</h2>
       <p>The planner is exposed as a ROS 2 node with a solver core that carries no ROS types. State assembly rebases the vehicle odometry into the target-centered frame each solve; the solver returns a state, control and feedback-gain triple; and a replayer interpolates the plan against wall-clock time, handing off between the active and pending horizons.</p>
       <p>A platform adapter isolates the airframe interface, so the same planner drives either a PX4 vehicle through MAVROS or a Crazyflie through Crazyswarm 2. Target kinematics enter through a separate publisher, which allows the estimator to be replaced without touching the planner.</p>
     </section>
 
-    <section class="beat" data-media="7">
+    <section class="beat" id="b7" data-media="7">
       <h2>Hardware Landing Experiments</h2>
       <p>A Crazyflie 2.1 quadrotor lands on an ST-mini unmanned ground vehicle (UGV), which serves as the moving target. A Qualisys motion-capture system streams pose measurements for both vehicles over ROS 2; onboard inertial measurement unit (IMU) data supplied through Crazyswarm 2 complete the Crazyflie&rsquo;s state estimate. The DDP solver runs off-board on an AMD Ryzen 7 4800HS CPU as a ROS 2 node.</p>
       <p>At each replanning instant, it reads the current relative state, holds the latest target acceleration estimate constant, and re-solves the landing OCP using the shifted previous solution as a warm start. Replanning is event-driven at approximately 5 Hz, with median solve times of 178&ndash;188 ms across all conditions.</p>
     </section>
 
     <!-- SOURCE: paper §4.3 (verbatim) -->
-    <section class="beat" data-media="8">
+    <section class="beat" id="b8" data-media="8">
       <h2>Landing timing and peak active-phase excesses</h2>
       <p>The STC trigger fires at \(t_{\mathrm{trig}}=6.56\)&ndash;\(8.19\) s in all runs, followed by a descent phase of 0.98&ndash;1.42 s.</p>
       <p>Speed, tilt, and thrust show zero executed excess; body-rate values use Crazyswarm 2&rsquo;s deg/s-to-rad/s conversion.</p>
@@ -514,9 +453,7 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
 
 <script>
 (function(){
-  var frames={}, beats=document.querySelectorAll('.beat[data-media]'),
-      rail=document.getElementById('rail'),
-      items=[].slice.call(document.querySelectorAll('.rail-item'));
+  var frames={}, beats=document.querySelectorAll('.beat[data-media]');
   document.querySelectorAll('.media-frame').forEach(function(f){frames[f.dataset.key]=f;});
 
   var readingQuery=matchMedia('(max-width:1100px), (prefers-reduced-motion:reduce)'),
@@ -534,15 +471,6 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
   }
   placeMedia();
   readingQuery.addEventListener('change',placeMedia);
-  items.forEach(function(it){
-    var target=it.dataset.sec ? document.getElementById(it.dataset.sec)
-                             : document.querySelector('.beat[data-media="'+it.dataset.for+'"]');
-    if(target){
-      if(!target.id) target.id='b'+it.dataset.for;
-      it.href='#'+target.id;
-    }
-  });
-
   // Only visible videos play. Phone visitors choose when to start a clip.
   var reduceMotion=matchMedia('(prefers-reduced-motion:reduce)');
   document.querySelectorAll('video').forEach(function(v){
@@ -563,7 +491,6 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
     document.querySelectorAll('video').forEach(function(v){videoObserver.observe(v);});
   }
 
-  function mark(pred){ items.forEach(function(it){ it.classList.toggle('on', pred(it)); }); }
 
   function showMedia(k){
     for(var i in frames) frames[i].classList.toggle('is-active', i===k);
@@ -573,7 +500,6 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
          !(navigator.connection && navigator.connection.saveData)) v.play().catch(function(){});
       else v.pause();
     }); }
-    mark(function(it){ return it.dataset.for===k; });
   }
 
   if(!('IntersectionObserver' in window)){ showMedia('1'); return; }
@@ -582,22 +508,6 @@ body.reading-layout .mobile-nav{display:flex;position:sticky;top:0;z-index:30;ga
     es.forEach(function(e){ if(e.isIntersecting) showMedia(e.target.dataset.media); });
   },{rootMargin:'-45% 0px -45% 0px',threshold:0});
   beats.forEach(function(b){io.observe(b);});
-
-  // full-width sections: keep the last figure pinned, highlight the section
-  var io2=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){
-      var id=e.target.id;
-      mark(function(it){ return it.dataset.sec===id; });
-    }});
-  },{rootMargin:'-40% 0px -55% 0px',threshold:0});
-  document.querySelectorAll('.wide[id]').forEach(function(w){io2.observe(w);});
-
-  // The opening stays full width; reveal the rail when the technical story starts.
-  var scrolly=document.querySelector('.scrolly');
-  function updateRail(){rail.classList.toggle('on',scrolly.getBoundingClientRect().top<=0);}
-  window.addEventListener('scroll',updateRail,{passive:true});
-  window.addEventListener('resize',updateRail);
-  updateRail();
 
   showMedia('1');
 })();
